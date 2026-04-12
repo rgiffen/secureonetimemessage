@@ -67,6 +67,19 @@ A hands-on walk-through covering the key scenarios. Each test has **Steps** and 
 - [ ] Click it. Message re-appears and counter starts again.
 - [ ] After the second timer expires, the Reveal button is disabled and text reads "This message has been viewed and deleted."
 
+### 1.4a Reveal auto-hide survives tab backgrounding (wall-clock timer)
+
+The 60 s auto-hide is computed from a wall-clock deadline, not a decrementing counter, so it keeps advancing while the tab is hidden (browsers throttle `setTimeout` in background tabs). This test confirms that.
+
+- [ ] Create and retrieve a fresh message. Click **Reveal Message**. The timer shows "Auto-hiding in 60 s".
+- [ ] Immediately switch to a different browser tab (don't minimize the window — just switch tabs). Set a stopwatch or wall-clock timer for **75 seconds**.
+- [ ] After 75 s, switch back to the SecureDrop tab.
+- [ ] **Expected**: the message is already hidden and the "Reveal again (1 remaining)" button is showing. You should not see "Auto-hiding in 55 s" or similar residual countdown.
+- [ ] Click **Reveal again**. Timer starts at 60 again. Switch tabs for ~20 s then return.
+- [ ] **Expected**: the displayed count reflects the real elapsed time (roughly "Auto-hiding in 40 s"), not ~55 s.
+- [ ] Reveal once more, click **Pause**, switch tabs for 2 minutes, come back, click **Resume**.
+- [ ] **Expected**: the full paused duration is preserved — counter picks up where it left off, not reset and not advanced.
+
 ### 1.5 Burn-on-fetch (F-19)
 
 - [ ] Open the same link in **another new private window**.
@@ -324,6 +337,55 @@ To reset for further testing: `podman exec secureonetimemessage_redis_1 redis-cl
 
 ---
 
+## 12. Dark mode
+
+### 12.1 Toggle, persistence, and no-flash
+
+- [ ] Start in a private/incognito window (so localStorage is empty). Make sure your OS is in **light** mode.
+- [ ] Load the compose page. It should render in the light ("Light Sentinel") palette — warm near-white background `#f9f9f9`, deep blue primary `#455f88`.
+- [ ] Click the sun/moon icon in the top-right of the nav. The UI flips to the dark ("Obsidian Vault") palette — deep charcoal background `#10141a`, light-blue primary `#b2c5ff`, light on-surface text.
+- [ ] DevTools → Application → Local Storage → `securedrop.theme` should be `"dark"`.
+- [ ] Reload the page. **Expected**: no flash of light content before dark applies. The page is dark from the first paint.
+- [ ] Click the toggle again to return to light. Reload. No flash of dark content. Local storage is `"light"`.
+
+### 12.2 System preference respected on first visit
+
+- [ ] Clear localStorage (DevTools → Application → Storage → Clear site data).
+- [ ] Switch your OS to **dark** mode (System Settings → Appearance).
+- [ ] Reload in a private window. **Expected**: site starts in dark mode (no `securedrop.theme` key yet; `prefers-color-scheme: dark` wins).
+- [ ] Switch OS to **light** mode and reload without touching the toggle. Site starts in light mode.
+- [ ] Click the toggle to explicitly pick dark. Now switch OS to light mode and reload. Site stays dark — explicit preference beats system preference.
+
+### 12.3 Full flow in dark mode
+
+- [ ] With dark mode active, walk through §1 end to end (compose → link → retrieval → reveal → burn). Watch for any element that looks wrong: unreadable text, thin strokes, hidden borders, white rectangles, button labels invisible, form field backgrounds indistinguishable from the page.
+- [ ] Specifically check:
+  - [ ] Compose textarea — placeholder visible, typed text visible, character counter visible.
+  - [ ] Monospaced link field on A2 — link text visible against the container background, Copy button readable.
+  - [ ] B2 code entry boxes — digits readable, focused box has a clear indicator.
+  - [ ] B5 reveal container — the payload code block has enough contrast against the card, the countdown and Pause affordance are legible.
+  - [ ] B4 / B4a terminal screens — headings readable, not washed out.
+
+### 12.4 Turnstile theme swap
+
+- [ ] On the compose page in **light** mode, let the Turnstile widget render. It should be the light theme (white box, dark text).
+- [ ] Click the theme toggle to switch to dark. The Turnstile widget should re-render in its dark theme (dark box, light text) within a second.
+- [ ] Toggle back to light. Widget flips back to the light theme.
+- [ ] **Regression check**: now solve the Turnstile challenge (or let it auto-pass with the dev test key). Once the widget shows a green check / success state, click the theme toggle. The widget should **not** re-render / reset itself — the earned token must survive the theme change. If it re-renders (goes back to the challenge state), that's a regression.
+
+### 12.5 Dark-mode banners
+
+- [ ] Trigger the sensitive-content amber banner in dark (paste `AKIAIOSFODNN7EXAMPLE` into the compose textarea). Banner text should be clearly legible against its amber-900 background.
+- [ ] Trigger the error banner (stop the backend and attempt to send a verification code on B1; see §8.3). Red banner must be readable.
+- [ ] Accessibility spot-check: use DevTools "Inspect accessibility" or a contrast extension on the banner text. All three banner tones should show ≥ 4.5:1 contrast ratio on dark backgrounds.
+
+### 12.6 Fonts legibility bump
+
+- [ ] In dark mode, small text (helper text under form fields, the §A2 metadata grid, footer copy, uppercase labels) should read clearly without feeling spindly. If any small text feels distractingly thin, note it.
+- [ ] Italic text (if any appears — some helper lines use italic) should not look too bold compared to surrounding body text.
+
+---
+
 ## Reset between scenarios
 
 Flush Redis to clear rate limiters and stuck messages:
@@ -348,7 +410,7 @@ podman compose -f compose.yaml -f compose.dev.yaml down
 
 ## Summary checklist
 
-- [ ] §1 Happy path (compose → share → retrieve → burn → silent OTP suppression on dead links)
+- [ ] §1 Happy path (compose → share → retrieve → reveal → wall-clock timer → burn → silent OTP suppression on dead links)
 - [ ] §2 Passphrase — correct and incorrect
 - [ ] §3 Sensitive content detection + confirmation dialog
 - [ ] §4 Configurable expiry + TTL-based deletion
@@ -359,5 +421,6 @@ podman compose -f compose.yaml -f compose.dev.yaml down
 - [ ] §9 Security properties (no cookies, headers, no 3rd-party scripts, fragment not sent, log redaction)
 - [ ] §10 Accessibility spot-checks
 - [ ] §11 Responsive on mobile viewport
+- [ ] §12 Dark mode (toggle, persistence, no-flash, full flow in dark, Turnstile theme swap, banner contrast, font legibility)
 
 Any failure — capture a screenshot and the DevTools Network entry, then file an issue or ping me to fix it.
