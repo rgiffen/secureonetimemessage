@@ -15,8 +15,14 @@ services:
       KMS_KEY_FILE: /run/secrets/kms_key
       LOG_LEVEL: info
     secrets:
-      - kms_key
-      - email_hash_salt
+      # mode 0o444 so the non-root `node` user inside the container can read
+      # these. They're still only readable, never writable.
+      - source: kms_key
+        target: kms_key
+        mode: 0o444
+      - source: email_hash_salt
+        target: email_hash_salt
+        mode: 0o444
     depends_on:
       redis:
         condition: service_healthy
