@@ -5,7 +5,9 @@ services:
       LOG_LEVEL: debug
       SMTP_URL: smtp://mailhog:1025
       SMTP_FROM: "SecureDrop <no-reply@securedrop.local>"
-      TURNSTILE_SECRET: "1x0000000000000000000000000000000AA"
+      # TURNSTILE_SECRET comes from .env so dev uses your real Cloudflare secret.
+      # To fall back to Cloudflare's always-pass test secret, uncomment:
+      # TURNSTILE_SECRET: "1x0000000000000000000000000000000AA"
       PUBLIC_BASE_URL: "http://localhost:8081"
     depends_on:
       mailhog:
@@ -16,7 +18,10 @@ services:
   frontend:
     build:
       args:
-        VITE_TURNSTILE_SITEKEY: "1x00000000000000000000AA"
+        # VITE_TURNSTILE_SITEKEY comes from .env so dev uses your real Cloudflare sitekey.
+        # To fall back to Cloudflare's always-pass test sitekey, uncomment:
+        # VITE_TURNSTILE_SITEKEY: "1x00000000000000000000AA"
+        VITE_TURNSTILE_SITEKEY: ${TURNSTILE_SITEKEY}
         VITE_API_BASE: /api
         VITE_PUBLIC_BASE_URL: "http://localhost:8081"
 

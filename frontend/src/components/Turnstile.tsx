@@ -40,6 +40,7 @@ export function Turnstile({ onToken }: { onToken: (token: string) => void }) {
         if (cancelled || !ref.current || !window.turnstile) return;
         widgetId.current = window.turnstile.render(ref.current, {
           sitekey,
+          theme: "light",
           callback: (token) => onToken(token),
         });
       })

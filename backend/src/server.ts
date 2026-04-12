@@ -18,6 +18,8 @@ async function main() {
   });
 
   app.addHook("onSend", async (_req, reply) => {
+    // Locked-down CSP: API only ever serves JSON; no inline, no external fetches.
+    reply.header("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; base-uri 'none'");
     reply.header("Referrer-Policy", "no-referrer");
     reply.header("X-Content-Type-Options", "nosniff");
     reply.header("X-Frame-Options", "DENY");

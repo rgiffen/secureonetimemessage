@@ -7,7 +7,9 @@ async function deriveArgon2id(passphrase: string, salt: Uint8Array): Promise<Uin
     password: passphrase,
     salt,
     parallelism: 1,
-    iterations: 3,
+    // Spec F-09 minimums: time >= 2, memory >= 64 MB. We use 4 iterations for
+    // a margin above the floor at negligible UX cost.
+    iterations: 4,
     memorySize: 64 * 1024, // 64 MB, in KiB
     hashLength: 32,
     outputType: "hex",
@@ -26,7 +28,8 @@ async function derivePbkdf2(passphrase: string, salt: Uint8Array): Promise<Uint8
   new Uint8Array(saltBuf).set(salt);
   const keyMat = await crypto.subtle.importKey("raw", passBuf, "PBKDF2", false, ["deriveBits"]);
   const bits = await crypto.subtle.deriveBits(
-    { name: "PBKDF2", salt: saltBuf, iterations: 600_000, hash: "SHA-256" },
+    // NIST SP 800-132 minimum is 600k; we use 800k for margin.
+    { name: "PBKDF2", salt: saltBuf, iterations: 800_000, hash: "SHA-256" },
     keyMat,
     256
   );

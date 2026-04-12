@@ -144,7 +144,14 @@ export async function registerMessageRoutes(app: FastifyInstance, deps: Deps) {
       try {
         await mailer.sendOtp(email, code);
       } catch (err) {
-        req.log.error({ err }, "otp send failed");
+        // Log only a bounded code (never the SMTP transcript) so that log
+        // greps cannot be used to enumerate which recipient addresses were
+        // seen by the server.
+        const errCode =
+          typeof err === "object" && err !== null && "code" in err
+            ? String((err as { code: unknown }).code)
+            : "unknown";
+        req.log.warn({ smtpErrCode: errCode }, "otp send failed");
       }
     }
 
@@ -162,7 +169,12 @@ export async function registerMessageRoutes(app: FastifyInstance, deps: Deps) {
     const token = req.params.token;
     const emailHashValue = hashEmail(cfg.emailHashSalt, email);
 
-    const verifyOk = (await hit(redis, `rl:verify:msg:${token}:ip:${req.ip}`, MAX_OTP_ATTEMPTS * 3, OTP_TTL_SECONDS)).allowed;
+    // Per F-17a: verification attempts are bound to (message, IP) and parallel
+    // sessions share the budget — opening multiple tabs or refreshing does NOT
+    // grant a fresh 3-attempt window. Capped just above MAX_OTP_ATTEMPTS so one
+    // honest typo followed by a resend still leaves the user with working retries.
+    const PER_IP_VERIFY_CAP = MAX_OTP_ATTEMPTS + 2;
+    const verifyOk = (await hit(redis, `rl:verify:msg:${token}:ip:${req.ip}`, PER_IP_VERIFY_CAP, OTP_TTL_SECONDS)).allowed;
     if (!verifyOk) {
       await jitter();
       return reply.code(400).send(UNIFORM_ERROR);

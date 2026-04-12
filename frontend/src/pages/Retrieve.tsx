@@ -41,7 +41,18 @@ export function Retrieve() {
   const [networkError, setNetworkError] = useState<string | null>(null);
 
   useEffect(() => {
-    const k = window.__SECUREDROP_K_LINK__;
+    // Prefer the value stashed by the inline bootstrap script in index.html,
+    // but fall back to reading window.location.hash in case React mounted
+    // before the bootstrap ran or the bootstrap was blocked.
+    let k = window.__SECUREDROP_K_LINK__;
+    if (!k && window.location.hash.length > 1) {
+      k = window.location.hash.slice(1);
+      try {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      } catch {
+        // best-effort
+      }
+    }
     if (!k) {
       setPhase("unavailable");
       return;
@@ -233,9 +244,7 @@ export function Retrieve() {
           {!revealed && (
             <div className="flex flex-col items-center gap-4 py-12 bg-surface-container-low">
               <Button onClick={doReveal} disabled={reveals >= 2}>
-                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  visibility
-                </span>
+                <span className="material-symbols-outlined filled">visibility</span>
                 {reveals === 0 ? "Reveal Message" : `Reveal again (${2 - reveals} remaining)`}
               </Button>
               {reveals >= 2 && (

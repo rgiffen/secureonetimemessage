@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "../components/Layout";
 import { Button } from "../components/Button";
@@ -35,6 +35,13 @@ export function Compose() {
   const navigate = useNavigate();
 
   const sensitive = useMemo(() => looksSensitive(message), [message]);
+  const autoExpandedRef = useRef(false);
+  useEffect(() => {
+    if (sensitive && !autoExpandedRef.current) {
+      autoExpandedRef.current = true;
+      setShowOptions(true);
+    }
+  }, [sensitive]);
   const submittable = message.length > 0 && email.length > 0 && captchaToken.length > 0 && !submitting;
 
   async function reallySubmit() {
@@ -140,12 +147,17 @@ export function Compose() {
           <button
             type="button"
             onClick={() => setShowOptions((s) => !s)}
-            className="flex items-center gap-2 group cursor-pointer transition-colors duration-200 hover:text-primary"
+            className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-surface-container-low hover:bg-surface-container transition-colors duration-200"
           >
-            <span className="font-label text-[0.75rem] uppercase tracking-[0.05em] text-on-surface-variant group-hover:text-primary">
-              Options
+            <span className="flex flex-col items-start gap-1">
+              <span className="font-label text-[0.75rem] uppercase tracking-[0.05em] text-on-surface-variant">
+                {showOptions ? "Hide advanced options" : "Show advanced options"}
+              </span>
+              <span className="text-xs text-on-surface-variant/80 normal-case tracking-normal">
+                Expiry window &amp; passphrase
+              </span>
             </span>
-            <span className="material-symbols-outlined text-outline group-hover:text-primary transition-transform duration-300">
+            <span className="material-symbols-outlined text-on-surface-variant transition-transform duration-300">
               {showOptions ? "expand_less" : "expand_more"}
             </span>
           </button>
@@ -195,9 +207,7 @@ export function Compose() {
 
           <Button type="submit" disabled={!submittable} loading={submitting}>
             Create Secure Link
-            <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
-              lock
-            </span>
+            <span className="material-symbols-outlined filled text-base">lock</span>
           </Button>
 
           {statusLine && (

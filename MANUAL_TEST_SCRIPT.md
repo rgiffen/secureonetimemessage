@@ -76,6 +76,24 @@ A hands-on walk-through covering the key scenarios. Each test has **Steps** and 
 
 **Alternative quicker check**: Send a **third** retrieve attempt by reloading and entering a wrong code — you will always see `invalid_or_expired`. The key property: the message is gone, but the UI never reveals that distinctly.
 
+### 1.6 Silent OTP suppression on dead links (F-17b, F-21, F-23)
+
+This confirms the intended behavior for **any** dead link — used, expired, or never-existed. The server must silently decline to send an OTP, both on the initial request AND on "Send a new code," without disclosing the link's state to the caller.
+
+- [ ] Clear MailHog first so the inbox is empty:
+  ```bash
+  curl -X DELETE http://localhost:8025/api/v1/messages
+  ```
+- [ ] Take the link you burned in §1.5 (or any other expired/invalid link) and open it in a new private window.
+- [ ] On B1, enter `alice@example.com` and click **Send Verification Code**. Page advances to B2 showing "Check your email."
+- [ ] Wait ~20 seconds. Refresh MailHog (http://localhost:8025). **Inbox must remain empty.** No OTP email was sent.
+- [ ] On B2, click **Didn't receive it? Send a new code.** The 30 s cooldown starts.
+- [ ] After cooldown, click **Resend** again. Wait another ~20 s.
+- [ ] **MailHog inbox must still be empty** — dead links never trigger an OTP, even on resend.
+- [ ] Type any 6-digit code (`000000`) and submit. Result: "That code is invalid or expired."
+
+This is the same UX as if the code were simply wrong. The recipient won't learn the link is dead from server behavior — only from the cumulative experience of no email arriving.
+
 ---
 
 ## 2. Passphrase flow (B3, F-09)
@@ -147,7 +165,7 @@ A hands-on walk-through covering the key scenarios. Each test has **Steps** and 
   TOKEN=... # copy the token segment from the link
   podman exec secureonetimemessage_redis_1 redis-cli PEXPIRE msg:$TOKEN 1
   ```
-- [ ] Open the link in a private window → B1. Enter email, get... no email (backend silently drops the OTP because the message is gone). Enter any code → `invalid_or_expired`. ✓ Expired messages look identical to burned ones.
+- [ ] Open the link in a private window → B1. Enter email. MailHog stays empty — backend silently drops the OTP because the message is gone. Click **Send a new code** on B2: still no email. Enter any code → `invalid_or_expired`. ✓ Expired messages look identical to burned ones, including on resend. (See §1.6 for the full silent-OTP test.)
 
 ---
 
@@ -330,7 +348,7 @@ podman compose -f compose.yaml -f compose.dev.yaml down
 
 ## Summary checklist
 
-- [ ] §1 Happy path (compose → share → retrieve → burn)
+- [ ] §1 Happy path (compose → share → retrieve → burn → silent OTP suppression on dead links)
 - [ ] §2 Passphrase — correct and incorrect
 - [ ] §3 Sensitive content detection + confirmation dialog
 - [ ] §4 Configurable expiry + TTL-based deletion

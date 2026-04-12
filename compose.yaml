@@ -20,8 +20,11 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    ports:
-      - "8080:8080"
+    # Backend is only reachable over the internal compose network.
+    # All external traffic must flow through the frontend nginx so CSP /
+    # security headers / rate limits at the proxy are consistently applied.
+    # (To expose for local curl debugging, bind to 127.0.0.1 explicitly:
+    #   ports: ["127.0.0.1:8080:8080"])
     restart: unless-stopped
 
   frontend:
