@@ -20,9 +20,11 @@ services:
     # leaving them 0400 root:root inside the container and unreadable by the
     # non-root `node` user. Host files should be chmod 0644; the parent dir
     # (./secrets or ~/project/secrets) is 0700 so external users can't traverse.
+    # `:Z` applies an SELinux relabel so the container (container_t) can read
+    # files that normally carry a user_home_t context on RHEL/Fedora hosts.
     volumes:
-      - ./secrets/kms_key:/run/secrets/kms_key:ro
-      - ./secrets/email_hash_salt:/run/secrets/email_hash_salt:ro
+      - ./secrets/kms_key:/run/secrets/kms_key:ro,Z
+      - ./secrets/email_hash_salt:/run/secrets/email_hash_salt:ro,Z
     depends_on:
       redis:
         condition: service_healthy
