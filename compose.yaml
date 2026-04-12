@@ -14,15 +14,15 @@ services:
       EMAIL_HASH_SALT_FILE: /run/secrets/email_hash_salt
       KMS_KEY_FILE: /run/secrets/kms_key
       LOG_LEVEL: info
-    secrets:
-      # mode 0o444 so the non-root `node` user inside the container can read
-      # these. They're still only readable, never writable.
-      - source: kms_key
-        target: kms_key
-        mode: 0o444
-      - source: email_hash_salt
-        target: email_hash_salt
-        mode: 0o444
+    # Read-only bind mounts for the local KMS wrapping key and the email-hash
+    # HMAC salt. Using a bind mount (rather than the Compose `secrets:` block)
+    # because podman-compose silently ignores the `mode` field on secrets,
+    # leaving them 0400 root:root inside the container and unreadable by the
+    # non-root `node` user. Host files should be chmod 0644; the parent dir
+    # (./secrets or ~/project/secrets) is 0700 so external users can't traverse.
+    volumes:
+      - ./secrets/kms_key:/run/secrets/kms_key:ro
+      - ./secrets/email_hash_salt:/run/secrets/email_hash_salt:ro
     depends_on:
       redis:
         condition: service_healthy
@@ -62,9 +62,3 @@ services:
       timeout: 3s
       retries: 5
     restart: unless-stopped
-
-secrets:
-  kms_key:
-    file: ./secrets/kms_key
-  email_hash_salt:
-    file: ./secrets/email_hash_salt
