@@ -1,23 +1,34 @@
-# SecureDrop — Manual Test Script
+# SecureDrop — Manual Test Script (Prod)
 
-A hands-on walk-through covering the key scenarios. Each test has **Steps** and **Expected**. Tick each box as you go.
+A hands-on walk-through covering the key scenarios against the deployed production stack at **https://test-randy.stu.researchatmun.ca**. Each test has **Steps** and **Expected**. Tick each box as you go.
+
+> If you want to run this against the local dev stack (with MailHog) instead, see the git history for the local-targeted version of this script.
 
 ## Setup (do once)
 
-- [ ] Generate local secrets if not already present:
+- [ ] Confirm the stack is healthy:
   ```bash
-  openssl rand 32 > secrets/kms_key
-  openssl rand 32 > secrets/email_hash_salt
-  chmod 600 secrets/kms_key secrets/email_hash_salt
+  curl -sS https://test-randy.stu.researchatmun.ca/api/health
+  # -> {"status":"ok"}
   ```
-- [ ] Start the stack:
+- [ ] Flush prod Redis so rate-limit keys and any stale messages don't interfere with the test run:
   ```bash
-  podman compose -f compose.yaml -f compose.dev.yaml up --build
+  ssh -p 3322 test-randy@stu.researchatmun.ca \
+    "podman exec project_redis_1 redis-cli FLUSHALL"
   ```
-- [ ] Open two browser windows side-by-side:
-  - **Compose window** (regular): http://localhost:8081
-  - **MailHog inbox**: http://localhost:8025
-- [ ] Open browser DevTools in the compose window (Network tab + Console). Leave them open throughout.
+- [ ] In a second terminal, tail backend logs so you can correlate behaviour with server output:
+  ```bash
+  ssh -p 3322 test-randy@stu.researchatmun.ca '~/logs'
+  ```
+- [ ] Open one browser window pointed at https://test-randy.stu.researchatmun.ca and open DevTools (Network tab + Console). Leave them open throughout.
+- [ ] Have a real email inbox you control ready (Gmail/Outlook preferred — iCloud aggressively junks the Resend sends from `mail.barelyintelligentlife.ca` until its reputation builds). If you must use iCloud, add `no-reply@mail.barelyintelligentlife.ca` to your Contacts and mark any early test OTPs "Not Junk" before relying on inbox landing.
+
+### Prod-specific notes
+
+- **The Turnstile widget is real** (not the always-pass dev test key). You will see an actual Cloudflare challenge — usually managed/invisible, sometimes an interactive check. This means you cannot batch CAPTCHA-gated requests quickly.
+- **Emails go to your real inbox** via Resend. Watch for both the Inbox and the Spam folder.
+- **Container names on prod are `project_*`** (e.g. `project_backend_1`), not `secureonetimemessage_*`.
+- Backend is not reachable from the public internet except via the frontend nginx proxy at `/api/*`.
 
 ---
 
@@ -28,8 +39,8 @@ A hands-on walk-through covering the key scenarios. Each test has **Steps** and 
 - [ ] The page shows "SecureDrop" nav, a large empty textarea with "Paste your secret here…", a recipient email field, an "Options" disclosure, a Turnstile widget, and a "Create Secure Link" button.
 - [ ] The submit button is **disabled** until the textarea and email are both filled in.
 - [ ] Paste a simple secret like `ordinary note, no credentials` into the textarea. The character counter updates (e.g., `29 / 10,000`).
-- [ ] Enter `alice@example.com` in the recipient field.
-- [ ] The Turnstile widget self-completes within ~1s (dev test key always passes).
+- [ ] Enter your **real** recipient email in the recipient field (an inbox you can check).
+- [ ] Wait for the Turnstile widget to complete. If it shows an interactive challenge, solve it.
 - [ ] Click **Create Secure Link**. Brief status text flickers through "Encrypting…" → "Creating link…".
 
 **Expected**: You land on A2 (Link Created).
@@ -37,20 +48,20 @@ A hands-on walk-through covering the key scenarios. Each test has **Steps** and 
 ### 1.2 Link Created (A2)
 
 - [ ] Heading: "Your secure link is ready."
-- [ ] The link is displayed in a monospaced read-only input shaped like `http://localhost:8081/m/{token}#{K_link}`.
+- [ ] The link is displayed in a monospaced read-only input shaped like `https://test-randy.stu.researchatmun.ca/m/{token}#{K_link}`.
 - [ ] The token after `/m/` is a long random base64url string.
 - [ ] The fragment after `#` is another base64url string.
-- [ ] Summary row shows: `Recipient: a●●●●●●@example.com`, `Expires: in 24 hours`, `Passphrase: none`.
+- [ ] Summary row shows: `Recipient: {masked}`, `Expires: in 24 hours`, `Passphrase: none`.
 - [ ] Click **Copy**. The button text briefly changes to "Copied!" with a check icon, then reverts.
 - [ ] Paste into another text field (or `pbpaste`) and confirm the full link with fragment is on the clipboard.
 
 ### 1.3 Retrieve (B1 → B2 → B5)
 
 - [ ] Open the copied link in a **new private/incognito window** (so no cookies/state are shared).
-- [ ] **Immediately check the browser URL bar.** The `#...` fragment should be **gone** — URL should show only `http://localhost:8081/m/{token}`. ← This is the F-18a fragment scrub.
+- [ ] **Immediately check the browser URL bar.** The `#...` fragment should be **gone** — URL should show only `https://test-randy.stu.researchatmun.ca/m/{token}`. ← This is the F-18a fragment scrub.
 - [ ] The page shows "Someone sent you a secure message." with an email input.
-- [ ] Enter `alice@example.com` and click **Send Verification Code**.
-- [ ] Switch to MailHog (http://localhost:8025). A new email appears from `no-reply@securedrop.local` to `alice@example.com` with a 6-digit code in the body.
+- [ ] Enter the same real recipient email and click **Send Verification Code**.
+- [ ] Switch to your real inbox. Within ~10 s, an email arrives from `no-reply@mail.barelyintelligentlife.ca` (subject "Your SecureDrop verification code") with a 6-digit code. Check Spam if it isn't in Inbox.
 - [ ] Type the code into the six digit boxes. Each digit auto-advances focus.
 - [ ] When the 6th digit is entered, the form auto-submits.
 
@@ -83,8 +94,8 @@ The 60 s auto-hide is computed from a wall-clock deadline, not a decrementing co
 ### 1.5 Burn-on-fetch (F-19)
 
 - [ ] Open the same link in **another new private window**.
-- [ ] Go through the email + OTP flow again (check MailHog for the new code — but there won't be one because the message is gone). Actually: enter email → OTP will never arrive (uniform response silently skips sending for dead messages).
-- [ ] Wait ~30 seconds. **No email arrives in MailHog** for this second attempt.
+- [ ] Enter your email → click **Send Verification Code**. **No new email arrives** (the message is gone, so the server silently declines to send an OTP — uniform response).
+- [ ] Wait ~60 seconds. Nothing shows up in your inbox for this second attempt.
 - [ ] Instead, try a random 6-digit code anyway. Result should be "That code is invalid or expired."
 
 **Alternative quicker check**: Send a **third** retrieve attempt by reloading and entering a wrong code — you will always see `invalid_or_expired`. The key property: the message is gone, but the UI never reveals that distinctly.
@@ -93,16 +104,14 @@ The 60 s auto-hide is computed from a wall-clock deadline, not a decrementing co
 
 This confirms the intended behavior for **any** dead link — used, expired, or never-existed. The server must silently decline to send an OTP, both on the initial request AND on "Send a new code," without disclosing the link's state to the caller.
 
-- [ ] Clear MailHog first so the inbox is empty:
-  ```bash
-  curl -X DELETE http://localhost:8025/api/v1/messages
-  ```
+- [ ] Note the timestamp — you're about to confirm *no* emails arrive for a dead-link flow.
 - [ ] Take the link you burned in §1.5 (or any other expired/invalid link) and open it in a new private window.
-- [ ] On B1, enter `alice@example.com` and click **Send Verification Code**. Page advances to B2 showing "Check your email."
-- [ ] Wait ~20 seconds. Refresh MailHog (http://localhost:8025). **Inbox must remain empty.** No OTP email was sent.
+- [ ] On B1, enter your real recipient email and click **Send Verification Code**. Page advances to B2 showing "Check your email."
+- [ ] Wait ~60 seconds. **Your inbox must not receive a new OTP email during this window.** (Check Inbox and Spam.)
 - [ ] On B2, click **Didn't receive it? Send a new code.** The 30 s cooldown starts.
-- [ ] After cooldown, click **Resend** again. Wait another ~20 s.
-- [ ] **MailHog inbox must still be empty** — dead links never trigger an OTP, even on resend.
+- [ ] After cooldown, click **Resend** again. Wait another ~60 s.
+- [ ] **No OTP email still** — dead links never trigger an OTP, even on resend.
+- [ ] Cross-check with backend logs (the `~/logs` tail you started): you should see two `request-otp` incoming requests but no `otp send failed` and no successful send log for this token.
 - [ ] Type any 6-digit code (`000000`) and submit. Result: "That code is invalid or expired."
 
 This is the same UX as if the code were simply wrong. The recipient won't learn the link is dead from server behavior — only from the cumulative experience of no email arriving.
@@ -114,21 +123,21 @@ This is the same UX as if the code were simply wrong. The recipient won't learn 
 ### 2.1 Create with passphrase
 
 - [ ] Back on the compose page, paste a new secret: `second test message`.
-- [ ] Recipient: `bob@example.com`.
+- [ ] Recipient: your real email.
 - [ ] Click **Options** to expand. Choose `1 hour` expiry. Type a passphrase: `correct horse battery staple`.
 - [ ] Submit. You get a link. Summary shows `Passphrase: required`.
 
 ### 2.2 Retrieve with correct passphrase
 
 - [ ] Open the link in a private window.
-- [ ] Enter `bob@example.com`, get the OTP from MailHog, enter it.
+- [ ] Enter your real email, wait for the OTP email, enter the code.
 - [ ] Page goes to B3 with "One more step. This message is protected with a passphrase."
 - [ ] Enter `correct horse battery staple` and click **Decrypt Message**.
 - [ ] **Expected**: ~1–3 seconds of delay (Argon2id WASM downloading + hashing on first use), then the message reveals (B5) with the correct plaintext.
 
 ### 2.3 Retrieve with WRONG passphrase (B4a)
 
-- [ ] Repeat step 2.1: create a new link with passphrase `open-sesame` and recipient `carol@example.com`.
+- [ ] Repeat step 2.1: create a new link with passphrase `open-sesame` and your real recipient email.
 - [ ] Open in a private window, verify email, enter OTP.
 - [ ] On B3, enter the **wrong** passphrase: `nottheone`. Click **Decrypt Message**.
 - [ ] **Expected**: After ~1–3s of Argon2 work, the page transitions to **B4a — Unable to decrypt this message**.
@@ -157,7 +166,7 @@ This is the same UX as if the code were simply wrong. The recipient won't learn 
 ### 3.2 Confirmation dialog when proceeding without passphrase
 
 - [ ] Paste the AWS key pair again. Banner reappears.
-- [ ] Recipient: `alice@example.com`. Leave passphrase empty (no Options expansion).
+- [ ] Recipient: your real email. Leave passphrase empty (no Options expansion).
 - [ ] Click **Create Secure Link**.
 - [ ] **Expected**: A modal dialog appears: "Send without passphrase? — This message appears to contain sensitive credentials…" with two buttons:
   - **Go back and add one** (primary)
@@ -173,12 +182,13 @@ This is the same UX as if the code were simply wrong. The recipient won't learn 
 - [ ] Compose a message, expand Options, pick **1 hour**. Submit.
 - [ ] A2 summary says "Expires: in 1 hours" (note the minor plural bug — acceptable).
 - [ ] Repeat with **7 days** — summary should show "Expires: in 7 days".
-- [ ] Short-expiry check: compose with **1 hour** expiry. **Don't view it.** Fast-forward the Redis TTL:
+- [ ] Short-expiry check: compose with **1 hour** expiry. **Don't view it.** Copy the token from the link, then fast-forward the Redis TTL on prod:
   ```bash
-  TOKEN=... # copy the token segment from the link
-  podman exec secureonetimemessage_redis_1 redis-cli PEXPIRE msg:$TOKEN 1
+  TOKEN=...   # the token segment from the link
+  ssh -p 3322 test-randy@stu.researchatmun.ca \
+    "podman exec project_redis_1 redis-cli PEXPIRE msg:$TOKEN 1"
   ```
-- [ ] Open the link in a private window → B1. Enter email. MailHog stays empty — backend silently drops the OTP because the message is gone. Click **Send a new code** on B2: still no email. Enter any code → `invalid_or_expired`. ✓ Expired messages look identical to burned ones, including on resend. (See §1.6 for the full silent-OTP test.)
+- [ ] Open the link in a private window → B1. Enter email. Inbox stays empty — backend silently drops the OTP because the message is gone. Click **Send a new code** on B2: still no email. Enter any code → `invalid_or_expired`. ✓ Expired messages look identical to burned ones, including on resend. (See §1.6 for the full silent-OTP test.)
 
 ---
 
@@ -188,6 +198,7 @@ On the A2 screen after creating a message:
 
 - [ ] Click **Share…**. On Chrome/Safari desktop this may open a native share sheet; on Firefox it will fall back to copying. Either is acceptable.
 - [ ] Click **Email it**. The system's mail client opens a draft with:
+  - To: pre-filled with the recipient email you entered on compose
   - Subject: `Secure message for you`
   - Body: `I've sent you a secure message. Open this link and verify your email to view it: {link}\n\nDo not forward this link — it's intended only for you.`
 - [ ] Close without sending.
@@ -216,7 +227,7 @@ On the A2 screen after creating a message:
 ### 6.4 Resend cooldown
 
 - [ ] On B2, click **Didn't receive it? Send a new code.**
-- [ ] **Expected**: The link is disabled for 30 seconds and shows `Resend in 29s`, counting down. A new OTP email arrives in MailHog. Old codes stop working once the new one is issued.
+- [ ] **Expected**: The link is disabled for 30 seconds and shows `Resend in 29s`, counting down. A new OTP email arrives in your inbox. Old codes stop working once the new one is issued.
 
 ### 6.5 Backspace navigation
 
@@ -239,25 +250,27 @@ On the A2 screen after creating a message:
 
 ### 7.3 Per-IP rate limit (10 creates/hour, F-26)
 
-Easiest to exercise via curl so you don't have to click 11 times:
+This exercises the rate limit but **requires a valid Turnstile token** on prod (no always-pass test key). The easy path is to drive it through the UI: click Submit 11+ times in rapid succession (each requires a fresh Turnstile challenge). The cleaner curl path below will fail because we can't mint a real Turnstile token from the command line — use the UI approach, or temporarily skip this test.
 
+- [ ] (UI path) Submit 11 messages in rapid succession. **Expected**: the 11th shows "Too many messages from this address recently. Try again later." (429 from the API).
+- [ ] (Alternative) To verify the limit is in place, check the Redis counter mid-run:
+  ```bash
+  ssh -p 3322 test-randy@stu.researchatmun.ca \
+    "podman exec project_redis_1 redis-cli KEYS 'rl:create:ip:*'"
+  ```
+  After a few real creates you should see the `rl:create:ip:{your-ip}` key with a value counting up.
+
+To reset for further testing:
 ```bash
-for i in $(seq 1 12); do
-  curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:8080/api/messages \
-    -H "Content-Type: application/json" \
-    -d '{"ciphertext":"YQ==","nonce":"MTIzNDU2Nzg5MDEy","kServer":"YWFhYWFhYWFhYWFhYWFhYQ==","email":"rate@example.com","expirySeconds":3600,"hasPassphrase":false,"captchaToken":"x"}'
-done
+ssh -p 3322 test-randy@stu.researchatmun.ca \
+  "podman exec project_redis_1 redis-cli FLUSHALL"
 ```
-
-- [ ] **Expected**: First 10 requests return `201`. Requests 11 and 12 return `429`.
-
-To reset for further testing: `podman exec secureonetimemessage_redis_1 redis-cli FLUSHALL`.
 
 ### 7.4 Global OTP flood protection (F-17-global)
 
-- [ ] Create two messages targeting the **same** recipient email.
+- [ ] Create two messages targeting the **same** real recipient email (yours).
 - [ ] On each, click through to the OTP-request step within the same minute.
-- [ ] **Expected**: Only the first OTP request actually triggers a MailHog email. The second is silently rate-limited (the UI still shows "sent" — enumeration-resistant).
+- [ ] **Expected**: Only the first OTP request actually delivers an email. The second is silently rate-limited (the UI still shows "sent" — enumeration-resistant). Your inbox gets exactly one OTP email in that minute.
 
 ---
 
@@ -265,21 +278,32 @@ To reset for further testing: `podman exec secureonetimemessage_redis_1 redis-cl
 
 ### 8.1 Invalid token (B4)
 
-- [ ] Visit `http://localhost:8081/m/notarealtoken12345` in a private window.
+- [ ] Visit `https://test-randy.stu.researchatmun.ca/m/notarealtoken12345` in a private window.
 - [ ] Enter any email. Enter any 6-digit code.
 - [ ] **Expected**: After jitter delay, "That code is invalid or expired" on B2. There's no way to tell from the UI that the token never existed. ✓ Enumeration resistance.
 
 ### 8.2 No fragment in URL
 
-- [ ] Visit `http://localhost:8081/m/{any-token}` **without** the `#...` suffix.
+- [ ] Visit `https://test-randy.stu.researchatmun.ca/m/{any-token}` **without** the `#...` suffix.
 - [ ] **Expected**: The Retrieve page silently falls through to B4 (Message Unavailable) because there's no K_link to decrypt with.
 
 ### 8.3 Network error banner
 
-- [ ] On B1, stop the backend container: `podman stop secureonetimemessage_backend_1`.
+- [ ] On B1, stop the backend container on prod:
+  ```bash
+  ssh -p 3322 test-randy@stu.researchatmun.ca "podman stop project_backend_1"
+  ```
 - [ ] Enter email and click **Send Verification Code**.
 - [ ] **Expected**: Red banner "Network error — Something went wrong. Please try again."
-- [ ] Restart: `podman start secureonetimemessage_backend_1`. Retry succeeds.
+- [ ] Restart:
+  ```bash
+  ssh -p 3322 test-randy@stu.researchatmun.ca "podman start project_backend_1"
+  ```
+  Remember that nginx may have cached the previous backend's IP. If the frontend now returns 502s, also restart it:
+  ```bash
+  ssh -p 3322 test-randy@stu.researchatmun.ca "podman restart project_frontend_1"
+  ```
+- [ ] Retry succeeds.
 
 ---
 
@@ -287,33 +311,41 @@ To reset for further testing: `podman exec secureonetimemessage_redis_1 redis-cl
 
 ### 9.1 No cookies are set
 
-- [ ] DevTools → Application → Cookies → `localhost:8081`. Should be **empty** throughout the whole flow (sender and recipient). ✓ NF-05.
+- [ ] DevTools → Application → Cookies → `test-randy.stu.researchatmun.ca`. Should be **empty** throughout the whole flow (sender and recipient). ✓ NF-05.
 
 ### 9.2 Security headers
 
-- [ ] DevTools → Network → click the `index.html` request → Headers tab. Confirm presence of:
+- [ ] DevTools → Network → click the `index.html` (or `/`) request → Headers tab. Confirm presence of:
   - `Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; …`
   - `Referrer-Policy: no-referrer`
   - `X-Frame-Options: DENY`
   - `X-Content-Type-Options: nosniff`
   - `Cache-Control: no-store`
+  - Plus MUN's outer nginx may add `Strict-Transport-Security` — that's expected.
 
 ### 9.3 No third-party scripts on retrieval page (NF-02)
 
 - [ ] On the Retrieve page (`/m/{token}`), DevTools → Network → filter `JS`.
-- [ ] **Expected**: Only requests to `localhost:8081` (app bundles) and `fonts.googleapis.com` / `fonts.gstatic.com` (fonts). No analytics, no Turnstile (Turnstile is only loaded on the compose page).
+- [ ] **Expected**: Only requests to `test-randy.stu.researchatmun.ca` (app bundles) and `fonts.googleapis.com` / `fonts.gstatic.com` (fonts). No analytics, no Turnstile (Turnstile is only loaded on the compose page).
 
 ### 9.4 Fragment never sent to server
 
 - [ ] DevTools → Network → clear → paste a secure link into a fresh tab → watch the initial `GET /m/{token}` request.
-- [ ] **Expected**: The Request URL in DevTools shows only `/m/{token}`, not `#K_link`. (Browsers strip the fragment before sending, and you can confirm by looking at the `X-Forwarded-For` / request line in the backend/nginx logs: `podman logs secureonetimemessage_backend_1 | tail -5`.)
+- [ ] **Expected**: The Request URL in DevTools shows only `/m/{token}`, not `#K_link`. (Browsers strip the fragment before sending.) Confirm by inspecting backend logs for the request:
+  ```bash
+  ssh -p 3322 test-randy@stu.researchatmun.ca \
+    "podman logs project_backend_1 2>&1 | tail -5"
+  ```
 
 ### 9.5 Log redaction (NF-06)
 
-- [ ] After running the full happy path, dump backend logs:
+- [ ] After running the full happy path, dump backend logs and grep for anything sensitive:
   ```bash
-  podman logs secureonetimemessage_backend_1 2>&1 | tail -200 | grep -iE "alice|ciphertext|otp|ksrv|kserver" || echo "clean"
+  ssh -p 3322 test-randy@stu.researchatmun.ca \
+    "podman logs project_backend_1 2>&1 | tail -200" \
+    | grep -iE "your-email|ciphertext|otp code|kserver|[0-9]{6}" || echo "clean"
   ```
+  (Replace `your-email` with the local part of the address you used in the test run.)
 - [ ] **Expected**: Prints `clean`. No email addresses, no ciphertext, no OTP codes, no key material in logs.
 
 ---
@@ -371,12 +403,12 @@ To reset for further testing: `podman exec secureonetimemessage_redis_1 redis-cl
 - [ ] On the compose page in **light** mode, let the Turnstile widget render. It should be the light theme (white box, dark text).
 - [ ] Click the theme toggle to switch to dark. The Turnstile widget should re-render in its dark theme (dark box, light text) within a second.
 - [ ] Toggle back to light. Widget flips back to the light theme.
-- [ ] **Regression check**: now solve the Turnstile challenge (or let it auto-pass with the dev test key). Once the widget shows a green check / success state, click the theme toggle. The widget should **not** re-render / reset itself — the earned token must survive the theme change. If it re-renders (goes back to the challenge state), that's a regression.
+- [ ] **Regression check**: now solve the Turnstile challenge. Once the widget shows a green check / success state, click the theme toggle. The widget should **not** re-render / reset itself — the earned token must survive the theme change. If it re-renders (goes back to the challenge state), that's a regression.
 
 ### 12.5 Dark-mode banners
 
 - [ ] Trigger the sensitive-content amber banner in dark (paste `AKIAIOSFODNN7EXAMPLE` into the compose textarea). Banner text should be clearly legible against its amber-900 background.
-- [ ] Trigger the error banner (stop the backend and attempt to send a verification code on B1; see §8.3). Red banner must be readable.
+- [ ] Trigger the error banner (stop the backend per §8.3 and attempt to send a verification code on B1). Red banner must be readable.
 - [ ] Accessibility spot-check: use DevTools "Inspect accessibility" or a contrast extension on the banner text. All three banner tones should show ≥ 4.5:1 contrast ratio on dark backgrounds.
 
 ### 12.6 Fonts legibility bump
@@ -388,23 +420,14 @@ To reset for further testing: `podman exec secureonetimemessage_redis_1 redis-cl
 
 ## Reset between scenarios
 
-Flush Redis to clear rate limiters and stuck messages:
+Flush prod Redis to clear rate limiters and stuck messages:
 
 ```bash
-podman exec secureonetimemessage_redis_1 redis-cli FLUSHALL
+ssh -p 3322 test-randy@stu.researchatmun.ca \
+  "podman exec project_redis_1 redis-cli FLUSHALL"
 ```
 
-Clear MailHog inbox:
-
-```bash
-curl -X DELETE http://localhost:8025/api/v1/messages
-```
-
-## Teardown
-
-```bash
-podman compose -f compose.yaml -f compose.dev.yaml down
-```
+(Your real inbox is its own reality — you'll need to empty it manually if old OTP emails are cluttering the view.)
 
 ---
 
