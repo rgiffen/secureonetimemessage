@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getCurrentTheme, toggleTheme, type Theme } from "../theme";
 
 export function ThemeToggle() {
-  const [theme, setThemeState] = useState<Theme>("light");
-
-  useEffect(() => {
-    setThemeState(getCurrentTheme());
-  }, []);
+  // Seed from the DOM (bootstrap.js has already applied the class) so the
+  // initial render picks the correct icon and we don't flash the wrong one.
+  const [theme, setThemeState] = useState<Theme>(() => getCurrentTheme());
 
   function onClick() {
     toggleTheme();

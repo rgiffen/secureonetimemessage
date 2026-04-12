@@ -42,6 +42,8 @@ function loadScript(): Promise<void> {
 export function Turnstile({ onToken }: { onToken: (token: string) => void }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const widgetId = useRef<string | null>(null);
+  const hasToken = useRef(false);
+  const lastDark = useRef(document.documentElement.classList.contains("dark"));
   const sitekey = import.meta.env.VITE_TURNSTILE_SITEKEY ?? "";
 
   useEffect(() => {
@@ -57,10 +59,14 @@ export function Turnstile({ onToken }: { onToken: (token: string) => void }) {
         }
         widgetId.current = null;
       }
+      hasToken.current = false;
       widgetId.current = window.turnstile.render(ref.current, {
         sitekey,
         theme: getCurrentTheme(),
-        callback: (token) => onToken(token),
+        callback: (token) => {
+          hasToken.current = true;
+          onToken(token);
+        },
       });
     }
 
@@ -68,9 +74,16 @@ export function Turnstile({ onToken }: { onToken: (token: string) => void }) {
       // Turnstile blocked; leave widget empty
     });
 
-    // Re-render the widget when the app's theme toggles, so the Turnstile
-    // widget stays visually consistent with the surrounding UI.
+    // Re-render only when the `dark` class on <html> actually flips AND the
+    // widget hasn't already earned a token for the current challenge. If a
+    // token was issued, destroying the widget would invalidate it and force
+    // the user through the challenge again — a worse tradeoff than a
+    // briefly theme-mismatched widget.
     const observer = new MutationObserver(() => {
+      const nowDark = document.documentElement.classList.contains("dark");
+      if (nowDark === lastDark.current) return;
+      lastDark.current = nowDark;
+      if (hasToken.current) return;
       if (widgetId.current && window.turnstile) render();
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });

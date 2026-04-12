@@ -81,19 +81,20 @@
   --color-on-error: 105 0 5;                    /* #690005 */
   --color-on-error-container: 255 218 214;      /* #ffdad6 */
 
-  /* banner tones (dark) — lower saturation, readable on dark bg */
+  /* banner tones (dark) — lifted 100 units for WCAG AA contrast on the
+     deep -900 backgrounds (previously -300 body text landed below 4.5:1). */
   --color-banner-info-bg: 30 58 138;            /* blue-900 */
-  --color-banner-info-fg: 191 219 254;          /* blue-200 */
-  --color-banner-info-body: 147 197 253;        /* blue-300 */
-  --color-banner-info-icon: 147 197 253;
+  --color-banner-info-fg: 219 234 254;          /* blue-100 */
+  --color-banner-info-body: 191 219 254;        /* blue-200 */
+  --color-banner-info-icon: 191 219 254;
   --color-banner-warning-bg: 120 53 15;         /* amber-900 */
-  --color-banner-warning-fg: 253 230 138;       /* amber-200 */
-  --color-banner-warning-body: 252 211 77;      /* amber-300 */
-  --color-banner-warning-icon: 252 211 77;
+  --color-banner-warning-fg: 254 243 199;       /* amber-100 */
+  --color-banner-warning-body: 253 230 138;     /* amber-200 */
+  --color-banner-warning-icon: 253 230 138;
   --color-banner-error-bg: 127 29 29;           /* red-900 */
-  --color-banner-error-fg: 254 202 202;         /* red-200 */
-  --color-banner-error-body: 252 165 165;       /* red-300 */
-  --color-banner-error-icon: 252 165 165;
+  --color-banner-error-fg: 254 226 226;         /* red-100 */
+  --color-banner-error-body: 254 202 202;       /* red-200 */
+  --color-banner-error-icon: 254 202 202;
 }
 
 @layer base {
@@ -103,14 +104,22 @@
   }
 
   /* Compensate for the perceived thinning of light strokes on dark
-     backgrounds: bump the base Inter weight from 400 to 500, and let macOS
-     fall back to grayscale smoothing so strokes render a touch heavier.
-     Tailwind font-weight utilities (font-medium/semibold/bold) still win
-     where they're applied explicitly. */
-  html.dark {
+     backgrounds: bump the base Inter weight from 400 to 500. Scoped to
+     body rather than html so a future <html> styling hook stays at 400,
+     and macOS falls back to grayscale smoothing for a touch more weight.
+     Tailwind font-weight utilities (font-medium/semibold/bold) and any
+     explicit `font-normal` still win where applied. */
+  html.dark body {
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  /* Italic copy reads thinner at weight 500 than at 400 against dark bg in
+     some serifless faces — keep italics at the base weight. */
+  html.dark em,
+  html.dark i,
+  html.dark .italic {
+    font-weight: 400;
   }
   .material-symbols-outlined {
     font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
