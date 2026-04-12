@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#d3dbdd",
+                    "surface-container-high": "#e4e9ea",
+                    "on-primary": "#f6f7ff",
+                    "primary-fixed-dim": "#bfd5ff",
+                    "outline": "#757c7d",
+                    "outline-variant": "#adb3b4",
+                    "on-tertiary-fixed": "#373851",
+                    "surface-container-low": "#f2f4f4",
+                    "surface-bright": "#f9f9f9",
+                    "secondary-fixed-dim": "#d3d4db",
+                    "error-dim": "#4e0309",
+                    "primary-dim": "#39537c",
+                    "surface-variant": "#dde4e5",
+                    "secondary-fixed": "#e1e2e9",
+                    "on-secondary": "#f8f8ff",
+                    "secondary": "#5d5f65",
+                    "on-primary-fixed": "#254067",
+                    "on-primary-container": "#38527b",
+                    "tertiary-container": "#d9d7f8",
+                    "on-tertiary-fixed-variant": "#54546f",
+                    "on-background": "#2d3435",
+                    "error-container": "#fe8983",
+                    "on-primary-fixed-variant": "#425c85",
+                    "on-secondary-container": "#505257",
+                    "secondary-container": "#e1e2e9",
+                    "inverse-on-surface": "#9c9d9d",
+                    "on-tertiary": "#fbf7ff",
+                    "on-tertiary-container": "#4a4a65",
+                    "secondary-dim": "#515359",
+                    "error": "#9f403d",
+                    "surface": "#f9f9f9",
+                    "tertiary-fixed-dim": "#cbc9e9",
+                    "tertiary-dim": "#51516c",
+                    "inverse-surface": "#0c0f0f",
+                    "on-surface-variant": "#5a6061",
+                    "on-secondary-fixed-variant": "#5a5b61",
+                    "surface-container": "#ebeeef",
+                    "tertiary-fixed": "#d9d7f8",
+                    "surface-tint": "#455f88",
+                    "inverse-primary": "#b3cdfd",
+                    "tertiary": "#5d5d78",
+                    "primary-container": "#d6e3ff",
+                    "on-error-container": "#752121",
+                    "on-error": "#fff7f6",
+                    "primary": "#455f88",
+                    "background": "#f9f9f9",
+                    "on-secondary-fixed": "#3d3f45",
+                    "primary-fixed": "#d6e3ff",
+                    "on-surface": "#2d3435",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#dde4e5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        body {
+            background-color: #f9f9f9;
+            color: #2d3435;
+            -webkit-font-smoothing: antialiased;
+        }
+        .secret-textarea::placeholder {
+            color: #adb3b4;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar (Shared Component) -->
+<nav class="flex justify-center items-center py-8 w-full max-w-[560px] mx-auto px-6 bg-[#f9f9f9] dark:bg-slate-900 font-['Inter'] font-medium tracking-tight">
+<div class="flex items-center justify-between w-full">
+<span class="text-xl font-bold tracking-tighter text-[#2d3435] dark:text-slate-100">SecureDrop</span>
+<!-- Hidden context navigation logic applied here -->
+<div class="flex gap-6 text-sm">
+<span class="text-[#455f88] dark:text-blue-400 font-bold hover:opacity-80 transition-opacity duration-300 cursor-pointer active:scale-95 duration-200">Compose</span>
+<span class="text-[#2d3435] dark:text-slate-400 hover:opacity-80 transition-opacity duration-300 cursor-pointer active:scale-95 duration-200">History</span>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-[560px] mx-auto px-6 mt-12 pb-24">
+<!-- Composer Section -->
+<section class="space-y-12">
+<!-- Secret Textarea (The Payload Container) -->
+<div class="group">
+<div class="relative bg-surface-container-lowest border border-outline-variant/15 p-1">
+<textarea class="secret-textarea w-full min-h-[320px] p-6 bg-surface-dim/10 border-none focus:ring-0 font-label text-sm tracking-tight resize-none text-on-surface" id="payload" placeholder="Paste your secret here..." spellcheck="false"></textarea>
+<div class="flex justify-end p-4 border-t border-outline-variant/10">
+<span class="font-label text-[0.7rem] uppercase tracking-widest text-outline">
+                            0 / 10,000
+                        </span>
+</div>
+</div>
+</div>
+<!-- Configuration Form -->
+<div class="space-y-8">
+<!-- Recipient Field -->
+<div class="flex flex-col gap-3">
+<label class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-on-surface-variant font-medium" for="recipient">
+                        Recipient's email
+                    </label>
+<input class="w-full px-0 py-3 bg-transparent border-t-0 border-x-0 border-b-2 border-outline-variant/30 focus:border-primary focus:ring-0 transition-colors duration-300 text-on-surface font-medium placeholder:text-outline-variant/50" id="recipient" placeholder="address@domain.com" type="email"/>
+<p class="text-xs text-on-surface-variant/70 italic">
+                        They'll need to verify this address before viewing.
+                    </p>
+</div>
+<!-- Collapsed Options -->
+<button class="flex items-center gap-2 group cursor-pointer transition-colors duration-200 hover:text-primary">
+<span class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-on-surface-variant group-hover:text-primary">Options</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-transform duration-300" data-icon="expand_more">expand_more</span>
+</button>
+<!-- Primary CTA -->
+<button class="w-full py-5 bg-primary hover:bg-primary-dim text-on-primary font-bold tracking-tight rounded-sm transition-all duration-300 flex items-center justify-center gap-3 active:scale-[0.98]">
+                    Create Secure Link
+                    <span class="material-symbols-outlined text-sm" data-icon="lock" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lock</span>
+</button>
+</div>
+</section>
+<!-- Informational Tonal Layer (Subtle Detail) -->
+<div class="mt-24 p-8 bg-surface-container-low border-l-2 border-primary/20">
+<h3 class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-primary mb-3">Security Protocol</h3>
+<p class="text-sm leading-relaxed text-on-surface-variant max-w-[420px]">
+                Data is encrypted client-side using AES-256 before transmission. SecureDrop never stores your raw payload on disk.
+            </p>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="mt-16 pb-12 flex flex-col items-center gap-4 w-full max-w-[560px] mx-auto px-6 bg-transparent font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em]">
+<div class="flex gap-8">
+<a class="text-slate-400 dark:text-slate-500 hover:text-[#455f88] dark:hover:text-blue-400 transition-colors" href="#">How it works</a>
+<a class="text-slate-400 dark:text-slate-500 hover:text-[#455f88] dark:hover:text-blue-400 transition-colors" href="#">GitHub</a>
+<a class="text-slate-400 dark:text-slate-500 hover:text-[#455f88] dark:hover:text-blue-400 transition-colors" href="#">Security Manifest</a>
+</div>
+<div class="text-slate-400/60 mt-4">
+            © 2024 SecureDrop. The Architecture of Trust.
+        </div>
+</footer>
+</body></html>

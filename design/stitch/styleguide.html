@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SecureDrop | Design System &amp; Component Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f9f9f9",
+                        "tertiary-dim": "#51516c",
+                        "on-primary": "#f6f7ff",
+                        "error-container": "#fe8983",
+                        "on-background": "#2d3435",
+                        "secondary-dim": "#515359",
+                        "surface-variant": "#dde4e5",
+                        "surface-container-highest": "#dde4e5",
+                        "on-surface": "#2d3435",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f4f4",
+                        "outline-variant": "#adb3b4",
+                        "primary-container": "#d6e3ff",
+                        "surface-tint": "#455f88",
+                        "secondary-fixed": "#e1e2e9",
+                        "error-dim": "#4e0309",
+                        "on-secondary-fixed": "#3d3f45",
+                        "on-primary-fixed-variant": "#425c85",
+                        "tertiary-fixed": "#d9d7f8",
+                        "surface-container": "#ebeeef",
+                        "surface-container-high": "#e4e9ea",
+                        "on-tertiary": "#fbf7ff",
+                        "tertiary": "#5d5d78",
+                        "on-error": "#fff7f6",
+                        "secondary-container": "#e1e2e9",
+                        "surface-dim": "#d3dbdd",
+                        "on-secondary": "#f8f8ff",
+                        "on-primary-fixed": "#254067",
+                        "primary-fixed-dim": "#bfd5ff",
+                        "primary": "#455f88",
+                        "primary-dim": "#39537c",
+                        "on-secondary-container": "#505257",
+                        "on-tertiary-fixed-variant": "#54546f",
+                        "inverse-surface": "#0c0f0f",
+                        "inverse-on-surface": "#9c9d9d",
+                        "surface-bright": "#f9f9f9",
+                        "error": "#9f403d",
+                        "on-tertiary-fixed": "#373851",
+                        "on-primary-container": "#38527b",
+                        "on-surface-variant": "#5a6061",
+                        "on-error-container": "#752121",
+                        "surface": "#f9f9f9",
+                        "primary-fixed": "#d6e3ff",
+                        "tertiary-fixed-dim": "#cbc9e9",
+                        "secondary-fixed-dim": "#d3d4db",
+                        "on-tertiary-container": "#4a4a65",
+                        "secondary": "#5d5f65",
+                        "inverse-primary": "#b3cdfd",
+                        "outline": "#757c7d",
+                        "on-secondary-fixed-variant": "#5a5b61",
+                        "tertiary-container": "#d9d7f8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .ghost-border {
+            outline: 1px solid rgba(173, 179, 180, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body antialiased">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-[#f9f9f9] dark:bg-slate-900 fixed top-0 w-full z-50">
+<nav class="flex justify-center items-center py-8 w-full max-w-[560px] mx-auto px-6">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#2d3435] dark:text-slate-100">SecureDrop</span>
+<div class="flex gap-6 items-center">
+<a class="font-['Inter'] font-medium tracking-tight text-[#455f88] dark:text-blue-400 font-bold hover:opacity-80 transition-opacity duration-300" href="#">Design System</a>
+<a class="font-['Inter'] font-medium tracking-tight text-[#2d3435] dark:text-slate-400 hover:opacity-80 transition-opacity duration-300" href="#">Components</a>
+</div>
+</div>
+</nav>
+</header>
+<main class="pt-32 pb-24 px-6 max-w-6xl mx-auto">
+<!-- Hero / Intro -->
+<section class="mb-24">
+<h1 class="text-[3.5rem] font-extrabold tracking-[-0.02em] leading-tight text-on-surface mb-6">The Architecture of Trust</h1>
+<p class="text-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                A design manifest for the secure exchange of digital assets. We prioritize structural integrity over visual noise, utilizing tonal layering and negative space to communicate calm confidence.
+            </p>
+</section>
+<!-- 1. Color Palette -->
+<section class="mb-32">
+<div class="flex items-center gap-3 mb-12">
+<span class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-outline">01</span>
+<h2 class="text-1.5rem font-bold">Color Palette</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="space-y-4">
+<div class="h-32 bg-primary ghost-border"></div>
+<div>
+<p class="font-bold text-sm">Primary Action</p>
+<p class="font-label text-[0.75rem] text-outline uppercase">#455f88 / primary</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="h-32 bg-surface-container-low ghost-border"></div>
+<div>
+<p class="font-bold text-sm">Surface Foundation</p>
+<p class="font-label text-[0.75rem] text-outline uppercase">#f2f4f4 / container-low</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="h-32 bg-on-surface ghost-border"></div>
+<div>
+<p class="font-bold text-sm">Contrast Typography</p>
+<p class="font-label text-[0.75rem] text-outline uppercase">#2d3435 / on-surface</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="grid grid-cols-3 h-32 ghost-border">
+<div class="bg-error"></div>
+<div class="bg-amber-500"></div>
+<div class="bg-blue-400"></div>
+</div>
+<div>
+<p class="font-bold text-sm">Status Indicators</p>
+<p class="font-label text-[0.75rem] text-outline uppercase">Err / Warn / Info</p>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. Typography -->
+<section class="mb-32">
+<div class="flex items-center gap-3 mb-12">
+<span class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-outline">02</span>
+<h2 class="text-1.5rem font-bold">Typography Hierarchy</h2>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+<div class="space-y-12">
+<div class="space-y-2">
+<p class="font-label text-[0.75rem] text-outline uppercase mb-4">Display Large</p>
+<h3 class="text-[3.5rem] font-extrabold tracking-[-0.02em]">Editorial Voice</h3>
+</div>
+<div class="space-y-2">
+<p class="font-label text-[0.75rem] text-outline uppercase mb-4">Headline Medium</p>
+<h4 class="text-[1.75rem] font-bold">Structural Boundaries</h4>
+</div>
+<div class="space-y-2">
+<p class="font-label text-[0.75rem] text-outline uppercase mb-4">Body Standard</p>
+<p class="text-base leading-relaxed text-on-surface-variant">
+                            Inter is used for all UI labels, headers, and body copy. It communicates clarity and modern professionalism.
+                        </p>
+</div>
+</div>
+<div class="bg-surface-container-low p-12 space-y-8">
+<p class="font-label text-[0.75rem] text-outline uppercase">The Secure Zone (Technical Data)</p>
+<div class="space-y-4">
+<code class="font-label text-xl block text-primary">SHA-256: 7f83b1657ff1fc53b92</code>
+<code class="font-label text-base block text-on-surface-variant leading-relaxed">
+                            Payload initialization successful. <br/>
+                            Awaiting secure handshake... <br/>
+                            [SYSTEM_MANIFEST_LOADED]
+                        </code>
+</div>
+<p class="font-label text-[0.75rem] text-on-surface-variant leading-tight">
+                        SPACE GROTESK IS EMPLOYED FOR METADATA AND CRYPTOGRAPHIC PAYLOADS TO EVOKE A HIGH-SECURITY FEEL.
+                    </p>
+</div>
+</div>
+</section>
+<!-- 3. Component Library -->
+<section class="mb-32">
+<div class="flex items-center gap-3 mb-12">
+<span class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-outline">03</span>
+<h2 class="text-1.5rem font-bold">Component Library</h2>
+</div>
+<div class="space-y-24">
+<!-- Buttons -->
+<div>
+<h3 class="font-label text-[0.75rem] text-outline uppercase mb-8">Buttons: The Weight of Action</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<button class="bg-primary hover:bg-primary-dim text-on-primary py-4 px-6 text-sm font-semibold transition-all active:scale-95 duration-200">
+                            PRIMARY ACTION
+                        </button>
+<button class="ghost-border outline-primary text-primary py-4 px-6 text-sm font-semibold hover:bg-primary-container transition-all active:scale-95 duration-200">
+                            SECONDARY ACTION
+                        </button>
+<button class="bg-surface-dim text-outline py-4 px-6 text-sm font-semibold cursor-not-allowed" disabled="">
+                            DISABLED STATE
+                        </button>
+<button class="bg-primary text-on-primary py-4 px-6 text-sm font-semibold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined animate-spin text-[1.2rem]">sync</span>
+                            PROCESSING...
+                        </button>
+</div>
+</div>
+<!-- Form Elements -->
+<div>
+<h3 class="font-label text-[0.75rem] text-outline uppercase mb-8">Form Elements: Secure Entry</h3>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+<div class="space-y-2">
+<label class="font-label text-[0.75rem] text-on-surface uppercase">Standard Input</label>
+<input class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 px-4 py-3 transition-colors text-on-surface" placeholder="Vault Identifier" type="text"/>
+</div>
+<div class="space-y-2 lg:col-span-2">
+<label class="font-label text-[0.75rem] text-on-surface uppercase">Monospaced Payload Area</label>
+<textarea class="w-full font-label bg-surface-dim border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 px-4 py-3 transition-colors text-on-surface-variant" placeholder="Paste secure message payload here..." rows="3"></textarea>
+</div>
+<div class="space-y-4">
+<label class="font-label text-[0.75rem] text-on-surface uppercase">6-Digit Verification</label>
+<div class="flex gap-2">
+<input class="w-12 h-14 text-center text-xl font-bold bg-surface-container-highest border-0 border-b-2 border-primary focus:ring-0" maxlength="1" type="text"/>
+<input class="w-12 h-14 text-center text-xl font-bold bg-surface-container-highest border-0 border-b-2 border-primary focus:ring-0" maxlength="1" type="text"/>
+<input class="w-12 h-14 text-center text-xl font-bold bg-surface-container-highest border-0 border-b-2 border-primary focus:ring-0" maxlength="1" type="text"/>
+<div class="w-4 h-14 flex items-center justify-center text-outline-variant">—</div>
+<input class="w-12 h-14 text-center text-xl font-bold bg-surface-container-highest border-0 border-b-2 border-primary focus:ring-0" maxlength="1" type="text"/>
+<input class="w-12 h-14 text-center text-xl font-bold bg-surface-container-highest border-0 border-b-2 border-primary focus:ring-0" maxlength="1" type="text"/>
+<input class="w-12 h-14 text-center text-xl font-bold bg-surface-container-highest border-0 border-b-2 border-primary focus:ring-0" maxlength="1" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Banners -->
+<div>
+<h3 class="font-label text-[0.75rem] text-outline uppercase mb-8">Banners: Tonal Notifications</h3>
+<div class="space-y-4 max-w-3xl">
+<div class="bg-blue-50 p-4 flex gap-4 items-start">
+<span class="material-symbols-outlined text-blue-600">info</span>
+<div>
+<p class="text-sm font-bold text-blue-900">Information Manifest</p>
+<p class="text-sm text-blue-700">All data transfers are logged in the immutable audit trail.</p>
+</div>
+</div>
+<div class="bg-amber-50 p-4 flex gap-4 items-start">
+<span class="material-symbols-outlined text-amber-600">warning</span>
+<div>
+<p class="text-sm font-bold text-amber-900">Session Expiration Warning</p>
+<p class="text-sm text-amber-700">Your secure session will terminate in 120 seconds due to inactivity.</p>
+</div>
+</div>
+<div class="bg-red-50 p-4 flex gap-4 items-start">
+<span class="material-symbols-outlined text-red-600">gpp_maybe</span>
+<div>
+<p class="text-sm font-bold text-red-900">Security Breach Attempt</p>
+<p class="text-sm text-red-700">Failed authentication detected from IP: 192.168.1.1. Locking vault access.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Display Components -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<div class="space-y-6">
+<h3 class="font-label text-[0.75rem] text-outline uppercase">Link Display Box</h3>
+<div class="bg-surface-container-low p-6 space-y-4">
+<p class="text-sm text-on-surface-variant">Share this temporary access manifest:</p>
+<div class="flex">
+<div class="flex-grow bg-surface-container-highest px-4 py-3 font-label text-sm text-primary truncate">
+                                    securedrop.io/v/8f2k-99lp-x12m-90az
+                                </div>
+<button class="bg-primary text-on-primary px-4 flex items-center justify-center hover:bg-primary-dim transition-colors">
+<span class="material-symbols-outlined text-[1.2rem]">content_copy</span>
+</button>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<h3 class="font-label text-[0.75rem] text-outline uppercase">Payload Reveal Container</h3>
+<div class="bg-surface-container-lowest ghost-border p-6 relative overflow-hidden">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label text-[0.65rem] bg-error-container text-on-error-container px-2 py-0.5">SENSITIVE DATA</span>
+<div class="flex items-center gap-2 text-error font-label text-sm">
+<span class="material-symbols-outlined text-[1rem]">timer</span>
+                                    00:44
+                                </div>
+</div>
+<code class="block font-label text-on-surface text-sm leading-loose p-4 bg-surface-container-low border-l-2 border-primary">
+                                CRYPTO_KEY_ID: AZ-9901 <br/>
+                                PASS_PHRASE: lunar_echo_tango_9 <br/>
+                                ACCESS_LEVEL: LEVEL_4_ADM
+                            </code>
+<div class="mt-4 text-[0.65rem] text-outline italic">This data will self-destruct upon timer completion.</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Aesthetic Imagery Section -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
+<div class="h-96 w-full relative">
+<img alt="Cybersecurity theme" class="w-full h-full object-cover" data-alt="Close-up of server hardware in a dark room with subtle blue LED indicators and high-tech minimalist aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo-5R4FrUFD_23uzVWIMX0iDI98ie2yU7y7BZk_Dg13B3IUNcLxxNktXH9PYsNo9dTu5aAekKnXjOK0l89mUTropChpnbpTjJzP3MhtzZ3-_tUa9wRkd8ehx-1PCbNX3vhaULeIXTDipcGuURxhK5K5PDrg2peNtnIO-aRNWKhXNOp0ReJNILe94aClmr6q1I83O1Yqop3he0Fitz4aZ9bm-ZXurYp0tBf-ACHkpcCJ4bqbwtoyrmL2BH1mkq7eymhoSp1UaIYbkMi"/>
+<div class="absolute inset-0 bg-primary/20 backdrop-overlay"></div>
+</div>
+<div class="h-96 w-full relative">
+<img alt="Digital Vault theme" class="w-full h-full object-cover" data-alt="Abstract architectural lines and negative space in a minimalist concrete building with soft morning light and deep shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtSYD-lF890pMtjJUUVt1XI4Cm6uWUq76mAyJqH101tTvcqdq95RkFA5WVcfg2zJExIk-jfTfStyVfTmJVEuK5hkVSXGt9D59UNOuSQpRbQAB0QyJSIeXQrDWVuCa66oRBOrB57JwbMK46pdGh7deS2l7hoRgowKBBzZVWqGlNYmr7vwx1L72oUwEH-8APLIvldOjOo1bTrmJ_vCOf9-plETAq9N0HJjXFwN5a0dWbkr0x0kRfxefsHiGjFIHxwPJxug5_br_UDaZH"/>
+<div class="absolute inset-0 bg-primary/10 backdrop-overlay"></div>
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="pb-12 mt-32 flex flex-col items-center gap-4 w-full max-w-[560px] mx-auto px-6">
+<div class="flex gap-8">
+<a class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 dark:text-slate-500 hover:text-[#455f88] dark:hover:text-blue-400 transition-colors" href="#">Security Manifest</a>
+<a class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 dark:text-slate-500 hover:text-[#455f88] dark:hover:text-blue-400 transition-colors" href="#">Support</a>
+<a class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 dark:text-slate-500 hover:text-[#455f88] dark:hover:text-blue-400 transition-colors" href="#">Terms</a>
+</div>
+<p class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-[#455f88] dark:text-blue-400 opacity-100">© 2024 SecureDrop. The Architecture of Trust.</p>
+</footer>
+</body></html>

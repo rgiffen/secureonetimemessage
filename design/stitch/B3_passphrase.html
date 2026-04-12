@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SecureDrop - Passphrase Entry</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#d3dbdd",
+                        "surface-container-high": "#e4e9ea",
+                        "on-primary": "#f6f7ff",
+                        "primary-fixed-dim": "#bfd5ff",
+                        "outline": "#757c7d",
+                        "outline-variant": "#adb3b4",
+                        "on-tertiary-fixed": "#373851",
+                        "surface-container-low": "#f2f4f4",
+                        "surface-bright": "#f9f9f9",
+                        "secondary-fixed-dim": "#d3d4db",
+                        "error-dim": "#4e0309",
+                        "primary-dim": "#39537c",
+                        "surface-variant": "#dde4e5",
+                        "secondary-fixed": "#e1e2e9",
+                        "on-secondary": "#f8f8ff",
+                        "secondary": "#5d5f65",
+                        "on-primary-fixed": "#254067",
+                        "on-primary-container": "#38527b",
+                        "tertiary-container": "#d9d7f8",
+                        "on-tertiary-fixed-variant": "#54546f",
+                        "on-background": "#2d3435",
+                        "error-container": "#fe8983",
+                        "on-primary-fixed-variant": "#425c85",
+                        "on-secondary-container": "#505257",
+                        "secondary-container": "#e1e2e9",
+                        "inverse-on-surface": "#9c9d9d",
+                        "on-tertiary": "#fbf7ff",
+                        "on-tertiary-container": "#4a4a65",
+                        "secondary-dim": "#515359",
+                        "error": "#9f403d",
+                        "surface": "#f9f9f9",
+                        "tertiary-fixed-dim": "#cbc9e9",
+                        "tertiary-dim": "#51516c",
+                        "inverse-surface": "#0c0f0f",
+                        "on-surface-variant": "#5a6061",
+                        "on-secondary-fixed-variant": "#5a5b61",
+                        "surface-container": "#ebeeef",
+                        "tertiary-fixed": "#d9d7f8",
+                        "surface-tint": "#455f88",
+                        "inverse-primary": "#b3cdfd",
+                        "tertiary": "#5d5d78",
+                        "primary-container": "#d6e3ff",
+                        "on-error-container": "#752121",
+                        "on-error": "#fff7f6",
+                        "primary": "#455f88",
+                        "background": "#f9f9f9",
+                        "on-secondary-fixed": "#3d3f45",
+                        "primary-fixed": "#d6e3ff",
+                        "on-surface": "#2d3435",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#dde4e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .payload-container {
+            border: 1px solid rgba(173, 179, 180, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="bg-[#f9f9f9] dark:bg-slate-900 flex justify-center items-center py-8 w-full max-w-[560px] mx-auto px-6 fixed top-0 left-0 right-0 z-50">
+<div class="flex items-center justify-between w-full">
+<span class="text-xl font-bold tracking-tighter text-[#2d3435] dark:text-slate-100">SecureDrop</span>
+<div class="flex gap-6 items-center">
+<span class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400">Status: Encrypted</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex items-center justify-center px-6 pt-32 pb-24">
+<div class="w-full max-w-[480px] flex flex-col space-y-12">
+<!-- Secure Zone Visual Metaphor -->
+<div class="flex justify-start">
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-highest text-primary">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+</div>
+</div>
+<!-- Header Section -->
+<section class="space-y-4">
+<h1 class="text-[2.75rem] font-extrabold tracking-[-0.02em] text-on-surface leading-tight">
+                    One more step.
+                </h1>
+<p class="text-[1.125rem] text-on-surface-variant leading-relaxed font-normal max-w-[380px]">
+                    This message is protected with a passphrase. The sender should have shared it with you separately.
+                </p>
+</section>
+<!-- Form Section: The Payload Container -->
+<div class="payload-container bg-surface-container-lowest p-8 md:p-10">
+<form class="space-y-8">
+<div class="space-y-2">
+<label class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-outline">Passphrase</label>
+<div class="relative flex items-center group">
+<input class="w-full bg-surface-container-highest border-none border-b-2 border-transparent focus:ring-0 focus:border-primary px-4 py-4 font-['Space_Grotesk'] text-lg transition-all" placeholder="••••••••••••••••" type="password"/>
+<button class="absolute right-4 text-outline hover:text-primary transition-colors flex items-center" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary-dim text-on-primary py-5 px-6 font-medium tracking-tight text-lg shadow-sm active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-3" type="submit">
+                        Decrypt Message
+                        <span class="material-symbols-outlined text-[1.25rem]" data-icon="key">key</span>
+</button>
+</form>
+</div>
+<!-- Security Narrative Footer -->
+<div class="space-y-2 border-l-2 border-surface-container-high pl-6">
+<p class="font-['Space_Grotesk'] text-[0.7rem] uppercase tracking-[0.1em] text-outline">System Note</p>
+<p class="text-sm text-on-surface-variant font-light">
+                    Decryption occurs locally in your browser. Your passphrase is never transmitted to our servers.
+                </p>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-transparent flex flex-col items-center gap-4 w-full max-w-[560px] mx-auto px-6 pb-12">
+<div class="flex gap-8">
+<a class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 hover:text-[#455f88] transition-colors" href="#">Security Manifest</a>
+<a class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 hover:text-[#455f88] transition-colors" href="#">Support</a>
+<a class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 hover:text-[#455f88] transition-colors" href="#">Terms</a>
+</div>
+<div class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 opacity-60">
+            © 2024 SecureDrop. The Architecture of Trust.
+        </div>
+</footer>
+<!-- Aesthetic Decorative Element: Subtle Grain/Texture Layer -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-multiply z-[-1] bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')]"></div>
+</body></html>

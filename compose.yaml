@@ -1,0 +1,61 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      NODE_ENV: production
+      PORT: "8080"
+      REDIS_URL: redis://redis:6379
+      SMTP_URL: ${SMTP_URL}
+      SMTP_FROM: ${SMTP_FROM}
+      TURNSTILE_SECRET: ${TURNSTILE_SECRET}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL}
+      KMS_BACKEND: local
+      EMAIL_HASH_SALT_FILE: /run/secrets/email_hash_salt
+      KMS_KEY_FILE: /run/secrets/kms_key
+      LOG_LEVEL: info
+    secrets:
+      - kms_key
+      - email_hash_salt
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_TURNSTILE_SITEKEY: ${TURNSTILE_SITEKEY}
+        VITE_API_BASE: /api
+        VITE_PUBLIC_BASE_URL: ${PUBLIC_BASE_URL}
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  redis:
+    image: docker.io/redis:7-alpine
+    command:
+      - redis-server
+      - --save
+      - ""
+      - --appendonly
+      - "no"
+      - --maxmemory-policy
+      - allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+secrets:
+  kms_key:
+    file: ./secrets/kms_key
+  email_hash_salt:
+    file: ./secrets/email_hash_salt

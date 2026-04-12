@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;family=Space+Grotesk:wght@300;400;500;700&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#d3dbdd",
+                    "surface-container-high": "#e4e9ea",
+                    "on-primary": "#f6f7ff",
+                    "primary-fixed-dim": "#bfd5ff",
+                    "outline": "#757c7d",
+                    "outline-variant": "#adb3b4",
+                    "on-tertiary-fixed": "#373851",
+                    "surface-container-low": "#f2f4f4",
+                    "surface-bright": "#f9f9f9",
+                    "secondary-fixed-dim": "#d3d4db",
+                    "error-dim": "#4e0309",
+                    "primary-dim": "#39537c",
+                    "surface-variant": "#dde4e5",
+                    "secondary-fixed": "#e1e2e9",
+                    "on-secondary": "#f8f8ff",
+                    "secondary": "#5d5f65",
+                    "on-primary-fixed": "#254067",
+                    "on-primary-container": "#38527b",
+                    "tertiary-container": "#d9d7f8",
+                    "on-tertiary-fixed-variant": "#54546f",
+                    "on-background": "#2d3435",
+                    "error-container": "#fe8983",
+                    "on-primary-fixed-variant": "#425c85",
+                    "on-secondary-container": "#505257",
+                    "secondary-container": "#e1e2e9",
+                    "inverse-on-surface": "#9c9d9d",
+                    "on-tertiary": "#fbf7ff",
+                    "on-tertiary-container": "#4a4a65",
+                    "secondary-dim": "#515359",
+                    "error": "#9f403d",
+                    "surface": "#f9f9f9",
+                    "tertiary-fixed-dim": "#cbc9e9",
+                    "tertiary-dim": "#51516c",
+                    "inverse-surface": "#0c0f0f",
+                    "on-surface-variant": "#5a6061",
+                    "on-secondary-fixed-variant": "#5a5b61",
+                    "surface-container": "#ebeeef",
+                    "tertiary-fixed": "#d9d7f8",
+                    "surface-tint": "#455f88",
+                    "inverse-primary": "#b3cdfd",
+                    "tertiary": "#5d5d78",
+                    "primary-container": "#d6e3ff",
+                    "on-error-container": "#752121",
+                    "on-error": "#fff7f6",
+                    "primary": "#455f88",
+                    "background": "#f9f9f9",
+                    "on-secondary-fixed": "#3d3f45",
+                    "primary-fixed": "#d6e3ff",
+                    "on-surface": "#2d3435",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#dde4e5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .payload-glow {
+            box-shadow: 0 20px 40px -20px rgba(69, 95, 136, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar (Shared Component Translation) -->
+<nav class="fixed top-0 w-full z-50 bg-[#f9f9f9] dark:bg-slate-900 transition-opacity duration-300">
+<div class="flex justify-center items-center py-8 w-full max-w-[560px] mx-auto px-6">
+<div class="text-xl font-bold tracking-tighter text-[#2d3435] dark:text-slate-100 font-['Inter']">
+                SecureDrop
+            </div>
+</div>
+</nav>
+<main class="min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-32">
+<!-- Header Section -->
+<header class="w-full max-w-[560px] mb-12">
+<h1 class="text-[2.75rem] font-bold tracking-tighter leading-tight text-on-surface">
+                Your secure message.
+            </h1>
+</header>
+<!-- The Payload Container -->
+<section class="w-full max-w-[560px] relative">
+<!-- Timer Status -->
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 w-full flex justify-center">
+<div class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[14px]">timer</span>
+                    Auto-hiding in 58s...
+                </div>
+</div>
+<!-- Main Message Box -->
+<div class="surface-container-lowest border border-outline-variant/15 p-8 relative payload-glow group">
+<!-- Copy Button -->
+<button class="absolute top-6 right-6 p-2 text-outline hover:text-primary transition-colors flex items-center gap-1.5" title="Copy to clipboard">
+<span class="font-label text-[0.65rem] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copy</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="content_copy">content_copy</span>
+</button>
+<!-- Technical Header -->
+<div class="mb-6 pb-4 border-b border-outline-variant/10">
+<div class="font-label text-[0.65rem] uppercase tracking-widest text-outline-variant mb-1">Decrypted Payload</div>
+<div class="font-mono text-[0.7rem] text-outline opacity-50">HASH: 8f2b-9e4a-11cf-9023</div>
+</div>
+<!-- Actual Message Content -->
+<div class="bg-surface-container-low p-6 rounded-sm">
+<pre class="font-mono text-[0.9375rem] leading-relaxed text-on-surface whitespace-pre-wrap break-words">The encryption keys for Project Sentinel have been rotated. Use the new master key provided in the physical vault for all future transmissions. This communication protocol is now deprecated.</pre>
+</div>
+<!-- Content Metadata -->
+<div class="mt-6 flex justify-between items-center font-label text-[0.65rem] uppercase tracking-widest text-outline-variant">
+<span>Origin: Encrypted_Node_04</span>
+<span>Level 5 Security</span>
+</div>
+</div>
+<!-- Post-message notice -->
+<div class="mt-8 flex items-start gap-4 p-4">
+<span class="material-symbols-outlined text-primary" data-icon="verified_user">verified_user</span>
+<p class="text-[0.875rem] text-on-surface-variant leading-relaxed">
+                    This message has been permanently deleted from our servers. 
+                    <span class="block mt-1 font-label text-[0.7rem] uppercase tracking-wider text-outline">Persistence: 0% | Recovery: Impossible</span>
+</p>
+</div>
+</section>
+<!-- Call to Action / Exit -->
+<div class="mt-16 w-full max-w-[560px]">
+<button class="w-full bg-primary hover:bg-primary-dim text-on-primary py-4 px-6 text-[0.875rem] font-medium tracking-tight transition-all active:scale-95 duration-200 flex justify-center items-center gap-2">
+                Close and Exit Secure Zone
+                <span class="material-symbols-outlined text-[18px]">logout</span>
+</button>
+</div>
+</main>
+<!-- Footer (Shared Component Translation) -->
+<footer class="w-full max-w-[560px] mx-auto px-6 pb-12 mt-16 flex flex-col items-center gap-4 bg-transparent">
+<div class="flex gap-6">
+<a class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 dark:text-slate-500 hover:text-[#455f88] dark:hover:text-blue-400 transition-colors" href="#">Security Manifest</a>
+<a class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 dark:text-slate-500 hover:text-[#455f88] dark:hover:text-blue-400 transition-colors" href="#">Support</a>
+<a class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 dark:text-slate-500 hover:text-[#455f88] dark:hover:text-blue-400 transition-colors" href="#">Terms</a>
+</div>
+<div class="font-['Space_Grotesk'] text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 dark:text-slate-500">
+            © 2024 SecureDrop. The Architecture of Trust.
+        </div>
+</footer>
+</body></html>

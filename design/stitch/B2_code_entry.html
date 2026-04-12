@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SecureDrop - Verify Identity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#d3dbdd",
+                    "surface-container-high": "#e4e9ea",
+                    "on-primary": "#f6f7ff",
+                    "primary-fixed-dim": "#bfd5ff",
+                    "outline": "#757c7d",
+                    "outline-variant": "#adb3b4",
+                    "on-tertiary-fixed": "#373851",
+                    "surface-container-low": "#f2f4f4",
+                    "surface-bright": "#f9f9f9",
+                    "secondary-fixed-dim": "#d3d4db",
+                    "error-dim": "#4e0309",
+                    "primary-dim": "#39537c",
+                    "surface-variant": "#dde4e5",
+                    "secondary-fixed": "#e1e2e9",
+                    "on-secondary": "#f8f8ff",
+                    "secondary": "#5d5f65",
+                    "on-primary-fixed": "#254067",
+                    "on-primary-container": "#38527b",
+                    "tertiary-container": "#d9d7f8",
+                    "on-tertiary-fixed-variant": "#54546f",
+                    "on-background": "#2d3435",
+                    "error-container": "#fe8983",
+                    "on-primary-fixed-variant": "#425c85",
+                    "on-secondary-container": "#505257",
+                    "secondary-container": "#e1e2e9",
+                    "inverse-on-surface": "#9c9d9d",
+                    "on-tertiary": "#fbf7ff",
+                    "on-tertiary-container": "#4a4a65",
+                    "secondary-dim": "#515359",
+                    "error": "#9f403d",
+                    "surface": "#f9f9f9",
+                    "tertiary-fixed-dim": "#cbc9e9",
+                    "tertiary-dim": "#51516c",
+                    "inverse-surface": "#0c0f0f",
+                    "on-surface-variant": "#5a6061",
+                    "on-secondary-fixed-variant": "#5a5b61",
+                    "surface-container": "#ebeeef",
+                    "tertiary-fixed": "#d9d7f8",
+                    "surface-tint": "#455f88",
+                    "inverse-primary": "#b3cdfd",
+                    "tertiary": "#5d5d78",
+                    "primary-container": "#d6e3ff",
+                    "on-error-container": "#752121",
+                    "on-error": "#fff7f6",
+                    "primary": "#455f88",
+                    "background": "#f9f9f9",
+                    "on-secondary-fixed": "#3d3f45",
+                    "primary-fixed": "#d6e3ff",
+                    "on-surface": "#2d3435",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#dde4e5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(249, 249, 249, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col items-center selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="flex justify-center items-center py-8 w-full max-w-[560px] mx-auto px-6 bg-[#f9f9f9] dark:bg-slate-900">
+<div class="text-xl font-bold tracking-tighter text-[#2d3435] dark:text-slate-100 font-headline">
+            SecureDrop
+        </div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center w-full max-w-[560px] px-6 py-12">
+<!-- Header Section -->
+<header class="text-center mb-16">
+<h1 class="text-[2.75rem] font-extrabold tracking-tighter text-on-surface mb-4 leading-none">
+                Check your email.
+            </h1>
+<p class="text-on-surface-variant text-lg max-w-[320px] mx-auto leading-relaxed">
+                We sent a 6-digit code to <span class="text-on-surface font-semibold italic">j●●●@example.com</span>
+</p>
+</header>
+<!-- Verification Form -->
+<div class="w-full flex flex-col items-center">
+<!-- Code Input Container -->
+<div class="flex gap-3 mb-12">
+<!-- Individual Digit Boxes -->
+<div class="w-14 h-18 bg-surface-container-highest border-b-2 border-outline-variant flex items-center justify-center">
+<span class="font-label text-2xl font-bold text-primary">8</span>
+</div>
+<div class="w-14 h-18 bg-surface-container-highest border-b-2 border-outline-variant flex items-center justify-center">
+<span class="font-label text-2xl font-bold text-primary">2</span>
+</div>
+<div class="w-14 h-18 bg-surface-container-highest border-b-2 border-outline-variant flex items-center justify-center">
+<span class="font-label text-2xl font-bold text-primary">5</span>
+</div>
+<div class="w-14 h-18 bg-surface-container-highest border-b-2 border-primary flex items-center justify-center">
+<div class="w-0.5 h-8 bg-primary animate-pulse"></div>
+</div>
+<div class="w-14 h-18 bg-surface-container-low border-b-2 border-outline-variant/20 flex items-center justify-center">
+<span class="font-label text-2xl font-bold text-on-surface-variant/30"></span>
+</div>
+<div class="w-14 h-18 bg-surface-container-low border-b-2 border-outline-variant/20 flex items-center justify-center">
+<span class="font-label text-2xl font-bold text-on-surface-variant/30"></span>
+</div>
+</div>
+<!-- Action Button -->
+<!-- Note: Disabled styling applied via opacity and grayscale as per design system weight -->
+<button class="w-full py-5 bg-primary text-on-primary font-bold tracking-tight text-lg rounded-sm opacity-50 cursor-not-allowed transition-opacity duration-300">
+                Verify
+            </button>
+<!-- Cooldown & Resend Link -->
+<div class="mt-8 text-center">
+<p class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-on-surface-variant mb-2">
+                    Didn't receive it?
+                </p>
+<div class="flex items-center justify-center gap-2 group">
+<span class="text-on-surface font-medium hover:text-primary transition-colors cursor-pointer text-sm">
+                        Send a new code
+                    </span>
+<span class="text-outline-variant text-[0.7rem] font-label">
+                        (0:45)
+                    </span>
+</div>
+</div>
+</div>
+<!-- Security Badge/Context -->
+<div class="mt-24 p-6 bg-surface-container-low rounded-sm w-full border border-outline-variant/10">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="shield_lock" style="font-variation-settings: 'FILL' 1;">shield_lock</span>
+<div>
+<h3 class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-on-surface font-bold mb-1">Secure Session Active</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                        This verification link expires in 10 minutes. For your protection, SecureDrop never stores clear-text verification codes in our database.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="flex flex-col items-center gap-4 w-full max-w-[560px] mx-auto px-6 pb-12">
+<div class="flex gap-6">
+<a class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 hover:text-[#455f88] transition-colors" href="#">Security Manifest</a>
+<a class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 hover:text-[#455f88] transition-colors" href="#">Support</a>
+<a class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-slate-400 hover:text-[#455f88] transition-colors" href="#">Terms</a>
+</div>
+<p class="font-label text-[0.75rem] uppercase tracking-[0.05em] text-slate-400">
+            © 2024 SecureDrop. The Architecture of Trust.
+        </p>
+</footer>
+</body></html>
