@@ -35,8 +35,12 @@ export function Retrieve() {
   const [passphraseError, setPassphraseError] = useState<string | null>(null);
   const [plaintext, setPlaintext] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
+  // Wall-clock deadline — ms since epoch. null while paused or not revealed.
+  const [deadline, setDeadline] = useState<number | null>(null);
+  // Milliseconds remaining when paused. null while running.
+  const [pausedRemaining, setPausedRemaining] = useState<number | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(60);
-  const [paused, setPaused] = useState(false);
+  const paused = pausedRemaining !== null;
   const [reveals, setReveals] = useState(0);
   const [networkError, setNetworkError] = useState<string | null>(null);
 
@@ -70,15 +74,32 @@ export function Retrieve() {
     return () => clearInterval(t);
   }, [resendCooldown]);
 
+  // Auto-hide countdown. Uses the real clock (Date.now) rather than decrementing
+  // a counter so that background-tab throttling of setTimeout/setInterval does
+  // not let a "paused" timer mislead the user about remaining visibility.
+  // Also re-checks immediately on `visibilitychange` so a tab returning to
+  // focus after the deadline snaps to hidden right away.
   useEffect(() => {
-    if (!revealed || paused || reveals === 0) return;
-    if (secondsLeft <= 0) {
-      setRevealed(false);
-      return;
+    if (!revealed || reveals === 0 || deadline === null) return;
+    function tick() {
+      if (deadline === null) return;
+      const remainingMs = deadline - Date.now();
+      const remaining = Math.max(0, Math.ceil(remainingMs / 1000));
+      setSecondsLeft(remaining);
+      if (remainingMs <= 0) {
+        setRevealed(false);
+        setDeadline(null);
+      }
     }
-    const t = setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
-    return () => clearTimeout(t);
-  }, [revealed, paused, secondsLeft, reveals]);
+    tick();
+    const id = window.setInterval(tick, 250);
+    const onVis = () => tick();
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [revealed, deadline, reveals]);
 
   async function submitEmail(e: React.FormEvent) {
     e.preventDefault();
@@ -175,9 +196,24 @@ export function Retrieve() {
 
   function doReveal() {
     setSecondsLeft(60);
-    setPaused(false);
+    setPausedRemaining(null);
+    setDeadline(Date.now() + 60_000);
     setReveals((n) => n + 1);
     setRevealed(true);
+  }
+
+  function togglePause() {
+    if (pausedRemaining !== null) {
+      // resume — push deadline out by the remaining milliseconds
+      setDeadline(Date.now() + pausedRemaining);
+      setPausedRemaining(null);
+    } else if (deadline !== null) {
+      // pause — snapshot how much time is left, clear the deadline
+      const remainingMs = Math.max(0, deadline - Date.now());
+      setPausedRemaining(remainingMs);
+      setDeadline(null);
+      setSecondsLeft(Math.ceil(remainingMs / 1000));
+    }
   }
 
   async function copyPlain() {
@@ -263,7 +299,7 @@ export function Retrieve() {
                   <span>Auto-hiding in {secondsLeft}s</span>
                   <button
                     type="button"
-                    onClick={() => setPaused((p) => !p)}
+                    onClick={togglePause}
                     className="ml-2 underline hover:text-primary"
                   >
                     {paused ? "Resume" : "Pause"}

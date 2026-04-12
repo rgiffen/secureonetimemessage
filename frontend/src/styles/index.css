@@ -2,7 +2,116 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design tokens. Tailwind config maps semantic names (bg-surface, text-primary,
+   etc.) to these variables, so every existing class auto-adapts when the
+   `dark` class is present on <html>. */
+
+:root {
+  /* light theme — "light sentinel" */
+  --color-background: 249 249 249;               /* #f9f9f9 */
+  --color-surface: 249 249 249;
+  --color-surface-dim: 211 219 221;              /* #d3dbdd */
+  --color-surface-bright: 249 249 249;
+  --color-surface-container-lowest: 255 255 255; /* #ffffff */
+  --color-surface-container-low: 242 244 244;   /* #f2f4f4 */
+  --color-surface-container: 235 238 239;       /* #ebeeef */
+  --color-surface-container-high: 228 233 234;  /* #e4e9ea */
+  --color-surface-container-highest: 221 228 229; /* #dde4e5 */
+  --color-on-background: 45 52 53;              /* #2d3435 */
+  --color-on-surface: 45 52 53;
+  --color-on-surface-variant: 90 96 97;         /* #5a6061 */
+  --color-primary: 69 95 136;                   /* #455f88 */
+  --color-primary-dim: 57 83 124;               /* #39537c */
+  --color-primary-container: 214 227 255;       /* #d6e3ff */
+  --color-on-primary: 246 247 255;              /* #f6f7ff */
+  --color-on-primary-container: 56 82 123;      /* #38527b */
+  --color-secondary: 93 95 101;
+  --color-secondary-container: 225 226 233;
+  --color-tertiary: 93 93 120;
+  --color-tertiary-dim: 81 81 108;
+  --color-outline: 117 124 125;                 /* #757c7d */
+  --color-outline-variant: 173 179 180;         /* #adb3b4 */
+  --color-error: 159 64 61;                     /* #9f403d */
+  --color-error-container: 254 137 131;
+  --color-on-error: 255 247 246;
+  --color-on-error-container: 117 33 33;
+
+  /* banner tones (light) */
+  --color-banner-info-bg: 239 246 255;          /* blue-50 */
+  --color-banner-info-fg: 30 58 138;            /* blue-900 */
+  --color-banner-info-body: 29 78 216;          /* blue-700 */
+  --color-banner-info-icon: 37 99 235;          /* blue-600 */
+  --color-banner-warning-bg: 255 251 235;       /* amber-50 */
+  --color-banner-warning-fg: 120 53 15;         /* amber-900 */
+  --color-banner-warning-body: 146 64 14;       /* amber-800 */
+  --color-banner-warning-icon: 217 119 6;       /* amber-600 */
+  --color-banner-error-bg: 254 242 242;         /* red-50 */
+  --color-banner-error-fg: 127 29 29;           /* red-900 */
+  --color-banner-error-body: 185 28 28;         /* red-700 */
+  --color-banner-error-icon: 220 38 38;         /* red-600 */
+}
+
+.dark {
+  /* dark theme — "Obsidian Vault" */
+  --color-background: 16 20 26;                 /* #10141a */
+  --color-surface: 16 20 26;
+  --color-surface-dim: 16 20 26;
+  --color-surface-bright: 53 57 64;             /* #353940 */
+  --color-surface-container-lowest: 10 14 20;  /* #0a0e14 */
+  --color-surface-container-low: 24 28 34;     /* #181c22 */
+  --color-surface-container: 28 32 38;          /* #1c2026 */
+  --color-surface-container-high: 38 42 49;    /* #262a31 */
+  --color-surface-container-highest: 49 53 60; /* #31353c */
+  --color-on-background: 223 226 235;           /* #dfe2eb */
+  --color-on-surface: 223 226 235;
+  --color-on-surface-variant: 196 197 217;      /* #c4c5d9 */
+  --color-primary: 178 197 255;                 /* #b2c5ff */
+  --color-primary-dim: 148 171 240;             /* darker tint of primary for hover */
+  --color-primary-container: 27 101 232;        /* #1b65e8 */
+  --color-on-primary: 0 43 115;                 /* #002b73 */
+  --color-on-primary-container: 237 239 255;    /* #edefff */
+  --color-secondary: 180 202 214;               /* #b4cad6 */
+  --color-secondary-container: 55 76 86;        /* #374c56 */
+  --color-tertiary: 187 201 208;
+  --color-tertiary-dim: 155 168 175;
+  --color-outline: 142 144 162;                 /* #8e90a2 */
+  --color-outline-variant: 67 70 86;             /* #434656 */
+  --color-error: 255 180 171;                   /* #ffb4ab */
+  --color-error-container: 147 0 10;            /* #93000a */
+  --color-on-error: 105 0 5;                    /* #690005 */
+  --color-on-error-container: 255 218 214;      /* #ffdad6 */
+
+  /* banner tones (dark) — lower saturation, readable on dark bg */
+  --color-banner-info-bg: 30 58 138;            /* blue-900 */
+  --color-banner-info-fg: 191 219 254;          /* blue-200 */
+  --color-banner-info-body: 147 197 253;        /* blue-300 */
+  --color-banner-info-icon: 147 197 253;
+  --color-banner-warning-bg: 120 53 15;         /* amber-900 */
+  --color-banner-warning-fg: 253 230 138;       /* amber-200 */
+  --color-banner-warning-body: 252 211 77;      /* amber-300 */
+  --color-banner-warning-icon: 252 211 77;
+  --color-banner-error-bg: 127 29 29;           /* red-900 */
+  --color-banner-error-fg: 254 202 202;         /* red-200 */
+  --color-banner-error-body: 252 165 165;       /* red-300 */
+  --color-banner-error-icon: 252 165 165;
+}
+
 @layer base {
+  html, body {
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-on-background));
+  }
+
+  /* Compensate for the perceived thinning of light strokes on dark
+     backgrounds: bump the base Inter weight from 400 to 500, and let macOS
+     fall back to grayscale smoothing so strokes render a touch heavier.
+     Tailwind font-weight utilities (font-medium/semibold/bold) still win
+     where they're applied explicitly. */
+  html.dark {
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
   .material-symbols-outlined {
     font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
     vertical-align: middle;
@@ -11,7 +120,7 @@
     font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
   }
   .ghost-border {
-    outline: 1px solid rgba(173, 179, 180, 0.3);
+    outline: 1px solid rgb(var(--color-outline-variant) / 0.3);
   }
 }
 

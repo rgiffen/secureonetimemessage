@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SECUREDROP | Design System Manifest</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#cfe6f2",
+                        "primary-container": "#1b65e8",
+                        "surface-variant": "#31353c",
+                        "tertiary-fixed-dim": "#bbc9d0",
+                        "error-container": "#93000a",
+                        "inverse-on-surface": "#2d3137",
+                        "on-tertiary-container": "#e4f2fa",
+                        "on-primary-container": "#edefff",
+                        "secondary-container": "#374c56",
+                        "tertiary-fixed": "#d7e5ec",
+                        "surface-container-highest": "#31353c",
+                        "surface-container-high": "#262a31",
+                        "on-primary-fixed": "#001848",
+                        "on-surface": "#dfe2eb",
+                        "on-secondary-fixed-variant": "#354a53",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "surface-dim": "#10141a",
+                        "surface-container-low": "#181c22",
+                        "on-secondary-fixed": "#071e27",
+                        "tertiary": "#bbc9d0",
+                        "surface-container": "#1c2026",
+                        "primary": "#b2c5ff",
+                        "outline-variant": "#434656",
+                        "on-background": "#dfe2eb",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "inverse-primary": "#0056d2",
+                        "secondary-fixed-dim": "#b4cad6",
+                        "on-tertiary-fixed-variant": "#3c494f",
+                        "inverse-surface": "#dfe2eb",
+                        "surface": "#10141a",
+                        "on-primary": "#002b73",
+                        "secondary": "#b4cad6",
+                        "on-tertiary": "#253238",
+                        "on-secondary": "#1e333c",
+                        "on-primary-fixed-variant": "#0040a1",
+                        "surface-tint": "#b2c5ff",
+                        "outline": "#8e90a2",
+                        "on-secondary-container": "#a6bcc7",
+                        "surface-bright": "#353940",
+                        "primary-fixed": "#dae2ff",
+                        "background": "#10141a",
+                        "on-surface-variant": "#c4c5d9",
+                        "surface-container-lowest": "#0a0e14",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed": "#101d23",
+                        "tertiary-container": "#626f75"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .recessed-input {
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+        }
+        .glass-effect {
+            backdrop-filter: blur(24px);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #b2c5ff 0%, #1b65e8 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30 min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-xl shadow-2xl shadow-black/50 bg-slate-900">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
+<div class="text-lg font-black tracking-tighter text-slate-100 font-sans tracking-tight Inter">SECUREDROP</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-sans text-sm tracking-tight Inter" href="#">Compose</a>
+<a class="text-blue-400 font-bold border-b-2 border-blue-500 pb-1 font-sans text-sm tracking-tight Inter" href="#">History</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform hover:bg-slate-800/50 transition-all duration-200 p-2 rounded-full">
+<span class="material-symbols-outlined text-slate-100" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="flex-grow pt-24 pb-12 px-6 max-w-7xl mx-auto w-full">
+<!-- Hero Section -->
+<header class="mb-20">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high mb-6">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="shield" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant">Architecture of Trust</span>
+</div>
+<h1 class="text-5xl md:text-7xl font-black font-headline tracking-tighter text-on-surface mb-6 leading-none">THE SILENT<br/><span class="text-primary">SENTINEL</span></h1>
+<p class="text-on-surface-variant max-w-xl text-lg leading-relaxed">A high-end digital vault interface. Sophisticated terminal environments prioritizing privacy, authority, and extreme focus through Organic Brutalism.</p>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Left Column: Palette & Typography -->
+<div class="md:col-span-4 space-y-12">
+<!-- Color Palette -->
+<section>
+<h3 class="font-label text-xs uppercase tracking-widest text-secondary mb-6">01. Tonal Depth</h3>
+<div class="space-y-2">
+<div class="h-24 bg-surface rounded-lg flex flex-col justify-end p-4 outline outline-1 outline-outline-variant/15">
+<span class="font-label text-xs text-on-surface-variant">Surface Base</span>
+<span class="font-label text-[10px] opacity-50">#10141a</span>
+</div>
+<div class="h-20 bg-surface-container-low rounded-lg flex flex-col justify-end p-4">
+<span class="font-label text-xs text-on-surface-variant">Container Low</span>
+<span class="font-label text-[10px] opacity-50">#181c22</span>
+</div>
+<div class="h-16 bg-surface-container-high rounded-lg flex flex-col justify-end p-4">
+<span class="font-label text-xs text-on-surface-variant">Container High</span>
+<span class="font-label text-[10px] opacity-50">#262a31</span>
+</div>
+<div class="h-12 primary-gradient rounded-lg flex flex-col justify-end p-3">
+<span class="font-label text-xs text-on-primary">Primary Accent</span>
+<span class="font-label text-[10px] text-on-primary/70">#b2c5ff</span>
+</div>
+</div>
+</section>
+<!-- Typography -->
+<section>
+<h3 class="font-label text-xs uppercase tracking-widest text-secondary mb-6">02. Typography Stream</h3>
+<div class="space-y-6">
+<div>
+<p class="text-4xl font-headline font-bold text-on-surface tracking-tight">Inter Bold</p>
+<p class="font-label text-[10px] uppercase text-on-surface-variant tracking-widest mt-1">Human Narrative Interface</p>
+</div>
+<div class="pt-4 border-t border-outline-variant/10">
+<p class="text-2xl font-label text-primary tracking-tight">Space Grotesk</p>
+<p class="font-label text-[10px] uppercase text-on-surface-variant tracking-widest mt-1">Machine Data Integrity</p>
+</div>
+<div class="p-4 bg-surface-container-lowest rounded border border-outline-variant/5">
+<code class="font-label text-xs text-on-surface-variant block">USER_ID: 992-001-SDV</code>
+<code class="font-label text-xs text-on-surface-variant block">TIMESTAMP: 2024.10.12.04:55</code>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Components -->
+<div class="md:col-span-8 space-y-16">
+<!-- Buttons -->
+<section>
+<h3 class="font-label text-xs uppercase tracking-widest text-secondary mb-8">03. Action Modules</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div class="space-y-4">
+<button class="w-full h-12 primary-gradient text-on-primary font-bold text-sm tracking-tight rounded active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+                                AUTHORIZE ACCESS
+                            </button>
+<button class="w-full h-12 border border-outline/30 text-primary font-bold text-sm tracking-tight rounded hover:bg-primary/5 transition-colors flex items-center justify-center">
+                                SECONDARY ACTION
+                            </button>
+</div>
+<div class="space-y-4">
+<button class="w-full h-12 bg-surface-container-highest text-outline font-bold text-sm tracking-tight rounded cursor-not-allowed opacity-50" disabled="">
+                                SYSTEM RESTRICTED
+                            </button>
+<button class="w-full h-12 primary-gradient text-on-primary font-bold text-sm tracking-tight rounded opacity-80 flex items-center justify-center gap-3">
+<svg class="animate-spin h-4 w-4 text-on-primary" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+<path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+</svg>
+                                ENCRYPTING...
+                            </button>
+</div>
+</div>
+</section>
+<!-- Inputs & Verification -->
+<section>
+<h3 class="font-label text-xs uppercase tracking-widest text-secondary mb-8">04. Terminal Data Entry</h3>
+<div class="bg-surface-container-low p-8 rounded-xl space-y-8">
+<div class="space-y-2">
+<label class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant ml-1">Vault Credentials</label>
+<input class="w-full h-14 bg-surface-container-lowest border-none recessed-input rounded px-6 font-label text-primary placeholder:text-outline-variant/30 focus:ring-1 focus:ring-primary/40 transition-all outline-none" placeholder="ENTER ACCESS KEY" type="text"/>
+</div>
+<div class="space-y-4">
+<label class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant text-center block">6-Digit Verification Token</label>
+<div class="flex justify-between gap-2 max-w-sm mx-auto">
+<div class="w-12 h-14 bg-surface-container-lowest flex items-center justify-center rounded border border-outline-variant/10">
+<span class="font-label text-2xl text-primary">8</span>
+</div>
+<div class="w-12 h-14 bg-surface-container-lowest flex items-center justify-center rounded border border-outline-variant/10">
+<span class="font-label text-2xl text-primary">2</span>
+</div>
+<div class="w-12 h-14 bg-surface-container-lowest flex items-center justify-center rounded border border-outline-variant/10">
+<span class="font-label text-2xl text-primary">0</span>
+</div>
+<div class="w-12 h-14 bg-surface-container-lowest flex items-center justify-center rounded border border-outline-variant/10">
+<span class="font-label text-2xl text-primary">9</span>
+</div>
+<div class="w-12 h-14 bg-surface-container-lowest flex items-center justify-center rounded border border-outline-variant/10 ring-1 ring-primary/50 bg-surface-bright">
+<span class="w-1 h-6 bg-primary animate-pulse"></span>
+</div>
+<div class="w-12 h-14 bg-surface-container-lowest flex items-center justify-center rounded border border-outline-variant/10">
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Banners -->
+<section>
+<h3 class="font-label text-xs uppercase tracking-widest text-secondary mb-8">05. Intelligence Feedback</h3>
+<div class="space-y-4">
+<!-- Info -->
+<div class="bg-primary-container/10 p-4 rounded-lg flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-0.5" data-icon="info">info</span>
+<div>
+<p class="font-bold text-sm text-on-primary-container leading-none mb-1">SYNCHRONIZATION ACTIVE</p>
+<p class="text-xs text-on-primary-container/70 font-label">Your vault is currently syncing with the global mesh network.</p>
+</div>
+</div>
+<!-- Warning -->
+<div class="bg-secondary-container/20 p-4 rounded-lg flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary mt-0.5" data-icon="warning">warning</span>
+<div>
+<p class="font-bold text-sm text-secondary-fixed leading-none mb-1">UNUSUAL LOGIN ATTEMPT</p>
+<p class="text-xs text-secondary-fixed/70 font-label">Detected access from IP 192.168.1.105 (REDACTED).</p>
+</div>
+</div>
+<!-- Error -->
+<div class="bg-error-container/20 p-4 rounded-lg flex items-start gap-4 border-l-4 border-error">
+<span class="material-symbols-outlined text-error mt-0.5" data-icon="dangerous" style="font-variation-settings: 'FILL' 1;">dangerous</span>
+<div>
+<p class="font-bold text-sm text-error leading-none mb-1">ENCRYPTION FAILURE</p>
+<p class="text-xs text-error/70 font-label">The provided key does not match the vault signature.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 mt-auto bg-slate-950 border-t border-slate-800/30">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 gap-6 w-full">
+<div class="text-slate-500 font-mono text-[10px] uppercase tracking-widest Space Grotesk">© 2024 SECUREDROP VAULT</div>
+<div class="flex gap-8">
+<a class="text-slate-500 hover:text-blue-300 transition-colors font-mono text-[10px] uppercase tracking-widest Space Grotesk" href="#">Security Manifest</a>
+<a class="text-slate-500 hover:text-blue-300 transition-colors font-mono text-[10px] uppercase tracking-widest Space Grotesk" href="#">Support</a>
+<a class="text-slate-500 hover:text-blue-300 transition-colors font-mono text-[10px] uppercase tracking-widest Space Grotesk" href="#">Terms</a>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=Space+Grotesk:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#cfe6f2",
+                    "primary-container": "#1b65e8",
+                    "surface-variant": "#31353c",
+                    "tertiary-fixed-dim": "#bbc9d0",
+                    "error-container": "#93000a",
+                    "inverse-on-surface": "#2d3137",
+                    "on-tertiary-container": "#e4f2fa",
+                    "on-primary-container": "#edefff",
+                    "secondary-container": "#374c56",
+                    "tertiary-fixed": "#d7e5ec",
+                    "surface-container-highest": "#31353c",
+                    "surface-container-high": "#262a31",
+                    "on-primary-fixed": "#001848",
+                    "on-surface": "#dfe2eb",
+                    "on-secondary-fixed-variant": "#354a53",
+                    "primary-fixed-dim": "#b2c5ff",
+                    "surface-dim": "#10141a",
+                    "surface-container-low": "#181c22",
+                    "on-secondary-fixed": "#071e27",
+                    "tertiary": "#bbc9d0",
+                    "surface-container": "#1c2026",
+                    "primary": "#b2c5ff",
+                    "outline-variant": "#434656",
+                    "on-background": "#dfe2eb",
+                    "on-error": "#690005",
+                    "on-error-container": "#ffdad6",
+                    "inverse-primary": "#0056d2",
+                    "secondary-fixed-dim": "#b4cad6",
+                    "on-tertiary-fixed-variant": "#3c494f",
+                    "inverse-surface": "#dfe2eb",
+                    "surface": "#10141a",
+                    "on-primary": "#002b73",
+                    "secondary": "#b4cad6",
+                    "on-tertiary": "#253238",
+                    "on-secondary": "#1e333c",
+                    "on-primary-fixed-variant": "#0040a1",
+                    "surface-tint": "#b2c5ff",
+                    "outline": "#8e90a2",
+                    "on-secondary-container": "#a6bcc7",
+                    "surface-bright": "#353940",
+                    "primary-fixed": "#dae2ff",
+                    "background": "#10141a",
+                    "on-surface-variant": "#c4c5d9",
+                    "surface-container-lowest": "#0a0e14",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed": "#101d23",
+                    "tertiary-container": "#626f75"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .vault-gradient {
+            background: linear-gradient(135deg, #b2c5ff 0%, #1b65e8 100%);
+        }
+        .glass-panel {
+            background: rgba(49, 53, 60, 0.4);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="bg-slate-950/80 backdrop-blur-xl fixed top-0 w-full z-50 shadow-2xl shadow-black/50">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
+<div class="text-lg font-black tracking-tighter text-slate-100 font-headline">SECUREDROP</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-sans text-sm tracking-tight Inter" href="#">Compose</a>
+<a class="text-blue-400 font-bold border-b-2 border-blue-500 pb-1 font-sans text-sm tracking-tight Inter" href="#">History</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform text-slate-400 hover:text-slate-200">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center pt-24 pb-12 px-4 md:px-8">
+<div class="max-w-4xl w-full flex flex-col gap-8">
+<!-- Vault Status Header -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<div class="h-1.5 w-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(178,197,255,0.8)]"></div>
+<span class="font-label text-xs tracking-[0.2em] text-secondary uppercase">Secure Link Verified</span>
+</div>
+<h1 class="text-3xl md:text-5xl font-black font-headline tracking-tighter text-on-surface">Secret Payload Revealed</h1>
+</div>
+<!-- The Payload Container -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Main Content Area -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Revealed Content -->
+<div class="bg-surface-container-lowest border-l-4 border-primary p-8 md:p-12 relative overflow-hidden group shadow-2xl shadow-black/40">
+<!-- Technical Overlay Decoration -->
+<div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-6xl" data-icon="lock_open">lock_open</span>
+</div>
+<div class="flex flex-col gap-6 relative z-10">
+<div class="flex justify-between items-end">
+<span class="font-label text-[10px] uppercase tracking-widest text-outline">Decrypted content:</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-primary">Status: Validated</span>
+</div>
+<div class="font-label text-xl md:text-2xl text-on-surface leading-relaxed break-words bg-surface-container-low p-6 rounded-lg border border-outline-variant/30">
+<code class="text-primary-fixed-dim">SD-VAULT-2024: ACCESS_TOKEN=7749-X92-ALPHA-DELTA_SECURE_PAYLOAD_INITIATED_001</code>
+</div>
+<div class="flex flex-wrap gap-4 items-center">
+<button class="vault-gradient text-on-primary font-bold px-6 py-3 flex items-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+<span class="font-label text-xs uppercase tracking-wider">Copy To Clipboard</span>
+</button>
+<div class="bg-surface-container-high px-4 py-3 flex items-center gap-3 border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="timer">timer</span>
+<span class="font-label text-xs text-on-surface-variant">Auto-hiding in <span class="text-primary font-bold">58s</span>...</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Metadata Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-6 flex flex-col gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="fingerprint">fingerprint</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Originator ID</span>
+</div>
+<span class="font-label text-sm text-on-surface">USR-99283-VX</span>
+</div>
+<div class="bg-surface-container-low p-6 flex flex-col gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="history">history</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Expiration Policy</span>
+</div>
+<span class="font-label text-sm text-on-surface">Single-view/Burn-on-read</span>
+</div>
+</div>
+</div>
+<!-- Sidebar / Sidebar Decoration -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-container-high p-8 flex flex-col gap-6 border-t-2 border-primary">
+<span class="font-label text-xs font-bold text-primary tracking-widest uppercase">Security Advisory</span>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                            This message is encrypted with end-to-end zero-knowledge protocols. After the countdown expires, this local instance will be wiped from your browser memory.
+                        </p>
+<div class="h-[1px] w-full bg-outline-variant/20"></div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-error" data-icon="gpp_bad">gpp_bad</span>
+<div class="flex flex-col gap-1">
+<span class="text-xs font-bold text-on-surface">Do not take screenshots.</span>
+<span class="text-[10px] text-outline uppercase tracking-tight">Violation of security protocol</span>
+</div>
+</div>
+</div>
+<!-- Decorative Graphic -->
+<div class="relative h-32 w-full overflow-hidden grayscale contrast-125 opacity-40">
+<img alt="" class="w-full h-full object-cover" data-alt="abstract high-tech circuit board pattern with glowing blue lines on deep charcoal background digital fortress concept" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeh0nKzrpHGcuXDTabxah2MykTNFXLFVGXNL3k4zVIlVxBYfq7KfYlJc_Y_5JYS-Dy8IdHIVkLyv_DlLFMFNBeGRUbiwfC1Or4hf2vSEyHHuevEZrKkAtPDk8cvnVy7E19gd_9GFrdLfzDcPk5SFJ1APXnNMpkXcirR1WPUXw54FtDd5iyY6AdZijRCvw6KOlWfsB8VRwkLPs127TR7vJIi0TyJo6n6fzZmeuAujMS7858_1IrmsTUZ3GKQr-lPo1TDww_HYKuDnFM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-950 w-full py-12 mt-auto border-t border-slate-800/30">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 gap-6 w-full max-w-screen-2xl mx-auto">
+<div class="text-slate-500 font-mono text-[10px] uppercase tracking-widest Space Grotesk">© 2024 SECUREDROP VAULT</div>
+<div class="flex gap-8">
+<a class="text-slate-500 hover:text-blue-300 transition-colors font-mono text-[10px] uppercase tracking-widest Space Grotesk cursor-pointer" href="#">Security Manifest</a>
+<a class="text-slate-500 hover:text-blue-300 transition-colors font-mono text-[10px] uppercase tracking-widest Space Grotesk cursor-pointer" href="#">Support</a>
+<a class="text-slate-500 hover:text-blue-300 transition-colors font-mono text-[10px] uppercase tracking-widest Space Grotesk cursor-pointer" href="#">Terms</a>
+</div>
+</div>
+</footer>
+</body></html>
