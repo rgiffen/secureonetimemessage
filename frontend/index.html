@@ -9,21 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-    <script>
-      // F-18a: first-executing script extracts the fragment and scrubs it
-      // from the URL bar before any other script (analytics, extensions) can read it.
-      (function () {
-        try {
-          var hash = window.location.hash;
-          if (hash && hash.length > 1) {
-            window.__SECUREDROP_K_LINK__ = hash.slice(1);
-            window.history.replaceState(null, "", window.location.pathname + window.location.search);
-          }
-        } catch (e) {
-          // best-effort
-        }
-      })();
-    </script>
+    <!-- F-18a: fragment scrubber. Blocking (no async/defer), served from
+         /bootstrap.js, so it runs before the React module bundle. Kept out of
+         an inline <script> so script-src can remain 'self' with no hash. -->
+    <script src="/bootstrap.js"></script>
   </head>
   <body class="bg-background text-on-background font-body antialiased">
     <div id="root"></div>
