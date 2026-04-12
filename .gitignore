@@ -8,3 +8,6 @@ build/
 coverage/
 .vite/
 *.tsbuildinfo
+
+# Local-only dev notes
+TESTING.md
