@@ -3,7 +3,7 @@ import { loadConfig } from "./config.js";
 import { loggerOptions } from "./log.js";
 import { createRedis } from "./storage/redis.js";
 import { createKms } from "./kms/index.js";
-import { createEmailSender } from "./email/smtp.js";
+import { createEmailSender } from "./email/index.js";
 import { registerHealthRoute } from "./routes/health.js";
 import { registerMessageRoutes } from "./routes/messages.js";
 

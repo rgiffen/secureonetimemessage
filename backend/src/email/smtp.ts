@@ -1,11 +1,11 @@
 import nodemailer, { type Transporter } from "nodemailer";
 import type { AppConfig } from "../config.js";
+import type { EmailSender } from "./index.js";
 
-export interface EmailSender {
-  sendOtp(to: string, code: string): Promise<void>;
-}
-
-export function createEmailSender(cfg: AppConfig): EmailSender {
+export function createSmtpSender(cfg: AppConfig): EmailSender {
+  if (!cfg.smtpUrl) {
+    throw new Error("createSmtpSender called without smtpUrl");
+  }
   const transport: Transporter = nodemailer.createTransport(cfg.smtpUrl);
 
   return {

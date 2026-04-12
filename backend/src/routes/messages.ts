@@ -3,7 +3,7 @@ import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import type { AppConfig } from "../config.js";
 import type { Kms } from "../kms/index.js";
-import type { EmailSender } from "../email/smtp.js";
+import type { EmailSender } from "../email/index.js";
 import { burnOnFetch, type RedisClient } from "../storage/redis.js";
 import { hashEmail, extractDomain } from "../hashing.js";
 import { jitter } from "../sanitize.js";

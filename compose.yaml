@@ -6,8 +6,9 @@ services:
       NODE_ENV: production
       PORT: "8080"
       REDIS_URL: redis://redis:6379
-      SMTP_URL: ${SMTP_URL}
+      SMTP_URL: ${SMTP_URL:-}
       SMTP_FROM: ${SMTP_FROM}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
       TURNSTILE_SECRET: ${TURNSTILE_SECRET}
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL}
       KMS_BACKEND: local
