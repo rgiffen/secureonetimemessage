@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
@@ -12,8 +13,11 @@ export function Layout({ children }: { children: ReactNode }) {
           >
             SecureDrop
           </Link>
-          <div className="font-label text-[0.7rem] uppercase tracking-[0.1em] text-outline">
-            One-time secure transfer
+          <div className="flex items-center gap-3">
+            <span className="font-label text-[0.7rem] uppercase tracking-[0.1em] text-outline hidden sm:inline">
+              One-time secure transfer
+            </span>
+            <ThemeToggle />
           </div>
         </div>
       </nav>
