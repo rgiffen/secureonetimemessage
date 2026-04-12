@@ -5,11 +5,24 @@ export interface RateLimitResult {
   remaining: number;
 }
 
-export async function hit(redis: Redis, key: string, limit: number, windowSec: number): Promise<RateLimitResult> {
-  const count = await redis.incr(key);
-  if (count === 1) {
-    await redis.expire(key, windowSec);
-  }
+// Atomic INCR-and-set-TTL. Two separate round trips (INCR then EXPIRE only
+// when count == 1) leaves a window where a process crash between the two
+// calls would create a rate-limit key with no TTL — it would then persist
+// forever and poison the budget for that key. A single Lua script executes
+// both ops atomically on the Redis server.
+const INCR_WITH_TTL = `
+local c = redis.call('INCR', KEYS[1])
+if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end
+return c
+`;
+
+export async function hit(
+  redis: Redis,
+  key: string,
+  limit: number,
+  windowSec: number
+): Promise<RateLimitResult> {
+  const count = (await redis.eval(INCR_WITH_TTL, 1, key, String(windowSec))) as number;
   return { allowed: count <= limit, remaining: Math.max(0, limit - count) };
 }
 
