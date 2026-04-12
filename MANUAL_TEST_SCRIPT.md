@@ -403,7 +403,8 @@ ssh -p 3322 test-randy@stu.researchatmun.ca \
 - [ ] On the compose page in **light** mode, let the Turnstile widget render. It should be the light theme (white box, dark text).
 - [ ] Click the theme toggle to switch to dark. The Turnstile widget should re-render in its dark theme (dark box, light text) within a second.
 - [ ] Toggle back to light. Widget flips back to the light theme.
-- [ ] **Regression check**: now solve the Turnstile challenge. Once the widget shows a green check / success state, click the theme toggle. The widget should **not** re-render / reset itself — the earned token must survive the theme change. If it re-renders (goes back to the challenge state), that's a regression.
+- [ ] Solve the challenge (or let it auto-pass if you're on a managed widget). Toggle the theme. The widget will re-render and re-challenge — in managed mode this is invisible (flicker + auto-pass again); in interactive mode you may need to re-tap. Either outcome is expected — the Turnstile JS API doesn't support live theme swaps without re-rendering.
+- [ ] **Regression check**: after a theme toggle, the widget should end up in the new theme. If it stays in the previous theme and only updates after a page refresh, that's a regression.
 
 ### 12.5 Dark-mode banners
 

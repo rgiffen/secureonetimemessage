@@ -42,7 +42,6 @@ function loadScript(): Promise<void> {
 export function Turnstile({ onToken }: { onToken: (token: string) => void }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const widgetId = useRef<string | null>(null);
-  const hasToken = useRef(false);
   const lastDark = useRef(document.documentElement.classList.contains("dark"));
   const sitekey = import.meta.env.VITE_TURNSTILE_SITEKEY ?? "";
 
@@ -59,14 +58,10 @@ export function Turnstile({ onToken }: { onToken: (token: string) => void }) {
         }
         widgetId.current = null;
       }
-      hasToken.current = false;
       widgetId.current = window.turnstile.render(ref.current, {
         sitekey,
         theme: getCurrentTheme(),
-        callback: (token) => {
-          hasToken.current = true;
-          onToken(token);
-        },
+        callback: (token) => onToken(token),
       });
     }
 
@@ -74,16 +69,17 @@ export function Turnstile({ onToken }: { onToken: (token: string) => void }) {
       // Turnstile blocked; leave widget empty
     });
 
-    // Re-render only when the `dark` class on <html> actually flips AND the
-    // widget hasn't already earned a token for the current challenge. If a
-    // token was issued, destroying the widget would invalidate it and force
-    // the user through the challenge again — a worse tradeoff than a
-    // briefly theme-mismatched widget.
+    // Re-render when the `dark` class on <html> actually flips (ignore
+    // unrelated class mutations). The Turnstile API has no live-theme-swap
+    // method, so remove+render is the only option. In managed mode (most
+    // real widgets) the re-challenge is invisible; in the rare interactive
+    // case, the user may need to re-tap the check. We used to preserve
+    // already-issued tokens across theme changes but that made the widget
+    // silently stop swapping theme after the first auto-pass.
     const observer = new MutationObserver(() => {
       const nowDark = document.documentElement.classList.contains("dark");
       if (nowDark === lastDark.current) return;
       lastDark.current = nowDark;
-      if (hasToken.current) return;
       if (widgetId.current && window.turnstile) render();
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
