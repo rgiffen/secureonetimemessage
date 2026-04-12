@@ -11,7 +11,7 @@ export function createSmtpSender(cfg: AppConfig): EmailSender {
 
   return {
     async sendOtp(to, code) {
-      const { subject, text, html } = buildOtpEmail(code);
+      const { subject, text, html } = buildOtpEmail({ code, to, publicBaseUrl: cfg.publicBaseUrl });
       await transport.sendMail({ from: cfg.smtpFrom, to, subject, text, html });
     },
   };

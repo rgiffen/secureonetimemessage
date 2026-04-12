@@ -1,29 +1,49 @@
 // OTP email content. Kept in its own module so SMTP and Resend senders emit
 // identical multipart (text + html). Designed for robust rendering across
-// Gmail / iCloud / Outlook (no web fonts, no images, inline CSS, table layout).
+// Gmail / iCloud / Outlook (no web fonts, no images, inline CSS, table layout)
+// and for deliverability: personalised (recipient address in body), explicit
+// sender hostname, and framing that makes the purpose clear to both humans
+// and spam classifiers.
 
-export function buildOtpEmail(code: string) {
+export interface OtpEmailInput {
+  code: string;
+  to: string;
+  publicBaseUrl: string; // e.g. https://securedrop.example.com
+}
+
+function hostnameOf(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
+}
+
+export function buildOtpEmail({ code, to, publicBaseUrl }: OtpEmailInput) {
   const subject = "Your SecureDrop verification code";
+  const host = hostnameOf(publicBaseUrl);
 
   const text =
-    "Verify your email to view a secure message\n" +
+    `SecureDrop verification code for ${to}\n` +
     "\n" +
-    "Someone used SecureDrop to send you a one-time encrypted message.\n" +
-    "Enter this code on the page where you clicked the link:\n" +
+    `Your code: ${code}\n` +
     "\n" +
-    `    ${code}\n` +
+    `Someone used SecureDrop at ${host} to send a one-time encrypted\n` +
+    "message to this address. To view it, paste this code on the page\n" +
+    "where you clicked the link. Don't share this code with anyone.\n" +
     "\n" +
-    "This code expires in 10 minutes.\n" +
+    "The code expires in 10 minutes. The message can only be viewed\n" +
+    "once, and is then permanently deleted.\n" +
     "\n" +
-    "If you didn't expect a secure message, you can safely ignore this\n" +
-    "email — your inbox won't receive any further messages about it.\n" +
+    "If you didn't expect this, no action is needed — you won't receive\n" +
+    "further emails about it. Unused messages are deleted automatically.\n" +
     "\n" +
     "--\n" +
-    "SecureDrop never sees the contents of the message — it's encrypted\n" +
-    "in the sender's browser, and deleted as soon as you read it.\n";
+    `Sent by SecureDrop at ${host}.\n` +
+    "The server never sees the message content: it is encrypted in the\n" +
+    "sender's browser and destroyed as soon as you read it.\n";
 
-  const preheader =
-    "Use this code to verify your email and view the secure message someone sent you.";
+  const preheader = `Your SecureDrop code is ${code}. It expires in 10 minutes.`;
 
   const html = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -45,11 +65,14 @@ export function buildOtpEmail(code: string) {
           </tr>
           <tr>
             <td style="background-color:#ffffff;border:1px solid #e4e9ea;padding:40px 32px;">
-              <h1 style="margin:0 0 16px 0;font-size:20px;font-weight:600;color:#2d3435;line-height:1.3;">
-                Verify your email to view a secure message
+              <p style="margin:0 0 8px 0;font-size:13px;color:#757c7d;line-height:1.5;">
+                Verification code for <strong style="color:#2d3435;font-weight:600;">${to}</strong>
+              </p>
+              <h1 style="margin:0 0 20px 0;font-size:20px;font-weight:600;color:#2d3435;line-height:1.3;">
+                Your SecureDrop code
               </h1>
-              <p style="margin:0 0 32px 0;font-size:15px;line-height:1.5;color:#5a6061;">
-                Someone used SecureDrop to send you a one-time encrypted message. Enter this code on the page where you clicked the link:
+              <p style="margin:0 0 24px 0;font-size:15px;line-height:1.55;color:#5a6061;">
+                Someone used SecureDrop at <strong style="color:#2d3435;font-weight:600;">${host}</strong> to send a one-time encrypted message to this address. To view it, paste the code below on the page where you clicked the link. Don't share this code with anyone.
               </p>
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
@@ -59,16 +82,16 @@ export function buildOtpEmail(code: string) {
                 </tr>
               </table>
               <p style="margin:24px 0 0 0;font-size:13px;color:#5a6061;line-height:1.5;">
-                This code expires in 10 minutes.
+                The code expires in 10 minutes. The message can only be viewed once, and is then permanently deleted.
               </p>
-              <p style="margin:8px 0 0 0;font-size:13px;color:#5a6061;line-height:1.5;">
-                If you didn't expect a secure message, you can safely ignore this email &mdash; your inbox won't receive any further messages about it.
+              <p style="margin:12px 0 0 0;font-size:13px;color:#5a6061;line-height:1.5;">
+                If you didn't expect this, no action is needed &mdash; you won't receive further emails about it. Unused messages are deleted automatically.
               </p>
             </td>
           </tr>
           <tr>
-            <td style="padding:16px 4px;font-size:12px;color:#757c7d;line-height:1.5;">
-              SecureDrop never sees the contents of the message &mdash; it's encrypted in the sender's browser, and deleted as soon as you read it.
+            <td style="padding:16px 4px 4px 4px;font-size:12px;color:#757c7d;line-height:1.5;">
+              Sent by SecureDrop at <strong style="color:#5a6061;font-weight:600;">${host}</strong>. The server never sees the message content &mdash; it is encrypted in the sender's browser and destroyed as soon as you read it.
             </td>
           </tr>
         </table>

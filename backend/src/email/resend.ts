@@ -13,7 +13,7 @@ export function createResendSender(cfg: AppConfig): EmailSender {
 
   return {
     async sendOtp(to, code) {
-      const { subject, text, html } = buildOtpEmail(code);
+      const { subject, text, html } = buildOtpEmail({ code, to, publicBaseUrl: cfg.publicBaseUrl });
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 15_000);
       let res: Response;
