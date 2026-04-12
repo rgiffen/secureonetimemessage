@@ -7,9 +7,11 @@ const envSchema = z
     PORT: z.coerce.number().int().positive().default(8080),
     LOG_LEVEL: z.enum(["trace", "debug", "info", "warn", "error", "fatal"]).default("info"),
     REDIS_URL: z.string().url(),
-    SMTP_URL: z.string().min(1).optional(),
+    // preprocess: treat empty string as undefined so an unset value passed
+    // through docker-compose (${VAR:-}) is handled as "not configured".
+    SMTP_URL: z.preprocess((v) => (v === "" ? undefined : v), z.string().min(1).optional()),
     SMTP_FROM: z.string().min(1),
-    RESEND_API_KEY: z.string().min(1).optional(),
+    RESEND_API_KEY: z.preprocess((v) => (v === "" ? undefined : v), z.string().min(1).optional()),
     TURNSTILE_SECRET: z.string().min(1),
     PUBLIC_BASE_URL: z.string().url(),
     KMS_BACKEND: z.enum(["local", "aws", "gcp"]).default("local"),
