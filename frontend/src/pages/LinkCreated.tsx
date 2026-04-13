@@ -92,7 +92,7 @@ export function LinkCreated() {
               Share…
             </Button>
             <a
-              href={`mailto:${encodeURIComponent(state.email)}?subject=${mailtoSubject}&body=${mailtoBody}`}
+              href={`mailto:?subject=${mailtoSubject}&body=${mailtoBody}`}
               className="ghost-border text-primary py-4 px-6 text-sm font-semibold hover:bg-primary-container transition-all active:scale-[0.98] duration-200 flex items-center justify-center gap-2"
             >
               <span className="material-symbols-outlined text-[1.1rem]">mail</span>
