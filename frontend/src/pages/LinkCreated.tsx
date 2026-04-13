@@ -99,6 +99,13 @@ export function LinkCreated() {
               Email it
             </a>
           </div>
+          <div className="flex items-start gap-3 mt-1 p-3 bg-banner-warning-bg border-l-2 border-banner-warning-icon">
+            <span className="material-symbols-outlined text-banner-warning-icon mt-0.5 text-[1rem]">info</span>
+            <p className="text-xs text-banner-warning-body leading-relaxed">
+              <strong className="text-banner-warning-fg font-semibold">Heads up:</strong>{" "}
+              emailing this link sends it to the same inbox that will receive the verification code. For stronger two-factor protection, share the link through a different channel — Slack, SMS, phone, or in person — so an attacker would need both the link and the recipient's email to read the message.
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-label uppercase tracking-[0.05em] text-on-surface-variant">
