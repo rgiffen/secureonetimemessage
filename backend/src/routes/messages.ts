@@ -9,7 +9,7 @@ import { hashEmail, extractDomain } from "../hashing.js";
 import { jitter } from "../sanitize.js";
 import { verifyTurnstile } from "../captcha.js";
 import { isDisposableDomain } from "../disposable.js";
-import { generateOtp, otpEquals } from "../otp/otp.js";
+import { generateOtp } from "../otp/otp.js";
 import { hit, hitMany } from "../ratelimit/index.js";
 
 type Deps = { cfg: AppConfig; redis: RedisClient; kms: Kms; email: EmailSender };
@@ -21,9 +21,31 @@ const OTP_TTL_SECONDS = 10 * 60;
 const MAX_OTP_ATTEMPTS = 3;
 const MAX_OTP_REQUESTS_PER_MSG = 5;
 
+// Approximate worst-case ciphertext size derived from PRD F-01 (up to 10 000
+// plaintext chars). At 4-byte UTF-8 per char that's 40 000 bytes plaintext,
+// plus a 16-byte GCM tag, base64-encoded ~= 53 400 chars. 54 000 gives a
+// small margin without permitting much beyond what a legitimate sender
+// could produce.
+const MAX_CIPHERTEXT_CHARS = 54_000;
+
+// kServer wrapped format when a passphrase is set:
+//   1 byte version + 16 byte salt + 12 byte nonce + 32 byte ciphertext +
+//   16 byte GCM tag = 77 bytes. Unwrapped kServer is exactly 32 bytes
+//   (XOR share of the AES key). Slack on both to tolerate minor format
+//   evolution without re-bounding.
+const MIN_KSERVER_BYTES = 32;
+const MAX_KSERVER_BYTES_UNWRAPPED = 64;
+const MAX_KSERVER_BYTES_WRAPPED = 128;
+
 const createSchema = z.object({
-  ciphertext: z.string().min(1).max(32_000),
-  nonce: z.string().length(16),
+  ciphertext: z.string().min(1).max(MAX_CIPHERTEXT_CHARS),
+  // The 16-char length matches base64 of 12 bytes (the AES-GCM nonce), but
+  // refine to verify the decoded byte length actually equals 12 so malformed
+  // base64 that happens to be 16 chars long is rejected explicitly.
+  nonce: z.string().length(16).refine(
+    (s) => Buffer.from(s, "base64").length === 12,
+    { message: "nonce must decode to exactly 12 bytes" },
+  ),
   kServer: z.string().min(1).max(512),
   email: z.string().email().max(254),
   expirySeconds: z.number().int().min(MIN_EXPIRY_SECONDS).max(MAX_EXPIRY_SECONDS),
@@ -37,20 +59,25 @@ const verifySchema = z.object({
   otp: z.string().regex(/^\d{6}$/),
 });
 
-type StoredMessage = {
-  ciphertext: string;
-  nonce: string;
-  kServerWrapped: string;
-  kmsKeyId: string;
-  emailHash: string;
-  hasPassphrase: boolean;
-};
+// Schemas for objects we store in Redis. Even though we wrote these
+// structures ourselves, validating on read guards against a compromised
+// Redis, a forgotten schema migration, or a rogue tool mutating keys.
+const storedMessageSchema = z.object({
+  ciphertext: z.string(),
+  nonce: z.string(),
+  kServerWrapped: z.string(),
+  kmsKeyId: z.string(),
+  emailHash: z.string(),
+  hasPassphrase: z.boolean(),
+});
+type StoredMessage = z.infer<typeof storedMessageSchema>;
 
-type StoredOtp = {
-  codeHash: string;
-  attempts: number;
-  emailHash: string;
-};
+const storedOtpSchema = z.object({
+  codeHash: z.string(),
+  attempts: z.number().int().nonnegative(),
+  emailHash: z.string(),
+});
+type StoredOtp = z.infer<typeof storedOtpSchema>;
 
 function sha256Hex(s: string): string {
   return createHash("sha256").update(s).digest("hex");
@@ -59,6 +86,58 @@ function sha256Hex(s: string): string {
 function makeToken(): string {
   return randomBytes(32).toString("base64url");
 }
+
+function parseStoredMessage(raw: string | null): StoredMessage | null {
+  if (!raw) return null;
+  try {
+    const parsed = storedMessageSchema.safeParse(JSON.parse(raw));
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
+
+// Atomic verify-OTP-attempt: reads the OTP record, checks whether the
+// supplied code+email hash match, and updates or deletes in one Redis
+// round trip. Closes the read/modify/write race that existed when the
+// attempt counter was incremented across two separate commands.
+//
+// Returns one of: 'not_found' | 'exhausted' | 'matched' | 'wrong'.
+// TTL is preserved across misses by reading and re-applying the current
+// TTL inside the script.
+const VERIFY_OTP_SCRIPT = `
+local rec = redis.call('GET', KEYS[1])
+if not rec then return 'not_found' end
+local ok, data = pcall(cjson.decode, rec)
+if not ok or type(data) ~= 'table' then
+  redis.call('DEL', KEYS[1])
+  return 'not_found'
+end
+
+local attempts = tonumber(data.attempts) or 0
+local max = tonumber(ARGV[3])
+if attempts >= max then
+  redis.call('DEL', KEYS[1])
+  return 'exhausted'
+end
+
+if data.emailHash == ARGV[2] and data.codeHash == ARGV[1] then
+  redis.call('DEL', KEYS[1])
+  return 'matched'
+end
+
+attempts = attempts + 1
+data.attempts = attempts
+if attempts >= max then
+  redis.call('DEL', KEYS[1])
+  return 'exhausted'
+end
+
+local ttl = redis.call('TTL', KEYS[1])
+local newTtl = (ttl and ttl > 0) and ttl or tonumber(ARGV[4])
+redis.call('SET', KEYS[1], cjson.encode(data), 'EX', newTtl)
+return 'wrong'
+`;
 
 export async function registerMessageRoutes(app: FastifyInstance, deps: Deps) {
   const { cfg, redis, kms, email: mailer } = deps;
@@ -90,7 +169,8 @@ export async function registerMessageRoutes(app: FastifyInstance, deps: Deps) {
     }
 
     const kServerRaw = Buffer.from(body.kServer, "base64");
-    if (kServerRaw.length < 16 || kServerRaw.length > 256) {
+    const maxKServer = body.hasPassphrase ? MAX_KSERVER_BYTES_WRAPPED : MAX_KSERVER_BYTES_UNWRAPPED;
+    if (kServerRaw.length < MIN_KSERVER_BYTES || kServerRaw.length > maxKServer) {
       return reply.code(400).send({ error: "invalid_request" });
     }
     const wrapped = await kms.wrap(kServerRaw);
@@ -128,9 +208,7 @@ export async function registerMessageRoutes(app: FastifyInstance, deps: Deps) {
     ]);
     const perMsgOk = (await hit(redis, `rl:otp:msg:${token}`, MAX_OTP_REQUESTS_PER_MSG, MAX_EXPIRY_SECONDS)).allowed;
 
-    const msgRaw = await redis.get(`msg:${token}`);
-    const msg = msgRaw ? (JSON.parse(msgRaw) as StoredMessage) : null;
-
+    const msg = parseStoredMessage(await redis.get(`msg:${token}`));
     const shouldSend = globalOk && perMsgOk && msg !== null && msg.emailHash === emailHashValue;
 
     if (shouldSend) {
@@ -169,52 +247,52 @@ export async function registerMessageRoutes(app: FastifyInstance, deps: Deps) {
     const token = req.params.token;
     const emailHashValue = hashEmail(cfg.emailHashSalt, email);
 
-    // Per F-17a: verification attempts are bound to (message, IP) and parallel
-    // sessions share the budget — opening multiple tabs or refreshing does NOT
-    // grant a fresh 3-attempt window. Capped just above MAX_OTP_ATTEMPTS so one
-    // honest typo followed by a resend still leaves the user with working retries.
+    // Two rate-limit gates before we touch the OTP record:
+    //
+    //   rl:verify:msg:{token}:ip:{ip}     — per-(message, IP) cap. Parallel
+    //     tabs/refreshes share the budget so the 3-attempt OTP cap can't
+    //     be escalated from a single IP (F-17a).
+    //
+    //   rl:verify:hash:{emailHash}:hour   — global per-recipient cap. Guards
+    //     against distributed brute force where an attacker rotates across
+    //     many IPs (each of which still costs one attempt here). 20/hour
+    //     leaves plenty of room for a legitimate user's typos and resends
+    //     while pinning the overall attack bandwidth into the 6-digit space.
     const PER_IP_VERIFY_CAP = MAX_OTP_ATTEMPTS + 2;
-    const verifyOk = (await hit(redis, `rl:verify:msg:${token}:ip:${req.ip}`, PER_IP_VERIFY_CAP, OTP_TTL_SECONDS)).allowed;
-    if (!verifyOk) {
+    const gates = await hitMany(redis, [
+      { key: `rl:verify:msg:${token}:ip:${req.ip}`, limit: PER_IP_VERIFY_CAP, windowSec: OTP_TTL_SECONDS },
+      { key: `rl:verify:hash:${emailHashValue}:hour`, limit: 20, windowSec: 3600 },
+    ]);
+    if (!gates) {
       await jitter();
       return reply.code(400).send(UNIFORM_ERROR);
     }
 
-    const otpRaw = await redis.get(`otp:${token}`);
-    if (!otpRaw) {
-      await jitter();
-      return reply.code(400).send(UNIFORM_ERROR);
-    }
-    const otpRecord = JSON.parse(otpRaw) as StoredOtp;
+    // Atomic check-and-mutate of the OTP record. Closes the previous
+    // GET-compare-INCR-SET race: concurrent wrong-code submissions used
+    // to be able to both read the same `attempts` value and each write
+    // attempts+1, effectively dropping one increment and inflating the
+    // real per-code budget beyond MAX_OTP_ATTEMPTS.
+    const verdict = (await redis.eval(
+      VERIFY_OTP_SCRIPT,
+      1,
+      `otp:${token}`,
+      sha256Hex(otp),
+      emailHashValue,
+      String(MAX_OTP_ATTEMPTS),
+      String(OTP_TTL_SECONDS),
+    )) as string | null;
 
-    if (otpRecord.attempts >= MAX_OTP_ATTEMPTS) {
-      await redis.del(`otp:${token}`);
-      await jitter();
-      return reply.code(400).send(UNIFORM_ERROR);
-    }
-
-    const matches = otpRecord.emailHash === emailHashValue && otpEquals(sha256Hex(otp), otpRecord.codeHash);
-
-    if (!matches) {
-      otpRecord.attempts += 1;
-      if (otpRecord.attempts >= MAX_OTP_ATTEMPTS) {
-        await redis.del(`otp:${token}`);
-      } else {
-        const ttl = await redis.ttl(`otp:${token}`);
-        await redis.set(`otp:${token}`, JSON.stringify(otpRecord), "EX", ttl > 0 ? ttl : OTP_TTL_SECONDS);
-      }
+    if (verdict !== "matched") {
       await jitter();
       return reply.code(400).send(UNIFORM_ERROR);
     }
 
-    await redis.del(`otp:${token}`);
-
-    const msgRaw = await burnOnFetch(redis, `msg:${token}`);
-    if (!msgRaw) {
+    const msg = parseStoredMessage(await burnOnFetch(redis, `msg:${token}`));
+    if (!msg) {
       await jitter();
       return reply.code(400).send(UNIFORM_ERROR);
     }
-    const msg = JSON.parse(msgRaw) as StoredMessage;
 
     let kServerPlain: Buffer;
     try {

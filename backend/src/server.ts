@@ -32,7 +32,7 @@ async function main() {
 
   app.decorate("appDeps", { cfg, redis, kms, email });
 
-  registerHealthRoute(app);
+  registerHealthRoute(app, { kms, redis });
   await registerMessageRoutes(app, { cfg, redis, kms, email });
 
   const closeGracefully = async () => {
